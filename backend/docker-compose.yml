@@ -1,0 +1,19 @@
+version: "3.8"
+
+name: hidden-gems-pg
+services:
+  postgres:
+    image: postgres:18
+    container_name: hidden-gems-pg
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: username
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: hidden_gems
+    volumes:
+      - pgdata:/var/lib/postgresql/18/data
+
+volumes:
+  pgdata:

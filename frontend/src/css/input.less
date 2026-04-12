@@ -1,0 +1,28 @@
+input[type='text'],
+input[type='number'],
+textarea {
+  background: var(--black);
+  border-radius: 10px;
+  color: var(--white);
+  border: 1px solid var(--black);
+  height: 23px; // 35px with padding and border
+  font-size: 1.6rem;
+  font-family: var(--font-body);
+  padding: 5px 16px;
+
+  &:focus,
+  &:focus-visible,
+  &:focus-within,
+  &:active {
+    border: 1px solid var(--purple);
+    outline: none;
+  }
+
+  &::placeholder {
+    color: rgba(248, 250, 252, 0.6);
+  }
+}
+
+textarea {
+  height: auto;
+}
