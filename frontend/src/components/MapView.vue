@@ -2,10 +2,10 @@
   <div class="component-MapView">
     <Map :locationPoints="locationPoints" />
     <div class="map-overlay-items">
-      <button class="add-location blank"></button>
+      <button class="add-location blank" @click="openNewEdit()"></button>
       <div class="edit-view-wrapper">
         <transition name="show">
-          <LocationPointEditView v-if="isEditOpen" />
+          <LocationPointEditView v-if="isEditOpen" :selectedLocation="selectedLocation" />
         </transition>
       </div>
     </div>
@@ -31,13 +31,16 @@ export default {
     queryParams() {
       return this.$route?.query
     },
-    selectedLocation(): number | null {
+    selectedLocationId(): number | null {
       const locationRaw = this.queryParams?.location
       if (!locationRaw) return null
 
       const p = Number(locationRaw)
       if (isNaN(p)) return null
       return p
+    },
+    selectedLocation(): LocationPoint | null {
+      return this.locationPoints?.find((i) => i?.id === this.selectedLocationId) || null
     },
     isEditOpen(): boolean {
       return this.queryParams?.edit === 'true'
@@ -52,6 +55,9 @@ export default {
       const r = await api.getLocations()
       this.setLocationPoints(r)
       this.setLoading(false)
+    },
+    openNewEdit(): void {
+      this.$router.push({ query: { edit: 'true' } })
     },
 
     setLoading(loading: boolean): void {
@@ -69,7 +75,7 @@ export default {
   .map-overlay-items {
     position: relative;
     z-index: 10000;
-    
+
     .edit-view-wrapper {
       position: absolute;
       bottom: 0;
@@ -77,7 +83,7 @@ export default {
       right: 0;
       pointer-events: none;
     }
-    
+
     .show-enter-active,
     .show-leave-active {
       transition: all 0.3s ease-out;
