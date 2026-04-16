@@ -21,9 +21,7 @@ export class LocationPointService {
   async createLocationPoint(
     savePayload: NewLocationPoint,
   ): Promise<LocationPoint> {
-    console.log("PAYLOAD", savePayload)
-    return null as any
-    // return await this.repositoryService.locationPointStore.create(savePayload);
+    return await this.repositoryService.locationPointStore.create(savePayload);
   }
 }
 

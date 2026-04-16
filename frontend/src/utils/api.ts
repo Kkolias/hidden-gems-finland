@@ -21,6 +21,7 @@ export class ApiUtil {
     const response = await fetch(`${API_URL}${url}`, {
       method: 'POST',
       body: JSON.stringify(payload),
+      headers: { 'Content-Type': 'application/json' },
     })
 
     if (!response.ok) {
@@ -36,11 +37,11 @@ export class ApiUtil {
   }
 
   async createLocation(location: Partial<LocationPoint>): Promise<LocationPoint> {
-    return await this.post(LOCATION_POINT_PATHS.CREATE, { payload: location })
+    return await this.post(LOCATION_POINT_PATHS.CREATE, { payload: { location } })
   }
 
   async updateLocation(location: Partial<LocationPoint>): Promise<LocationPoint> {
-    return await this.post(LOCATION_POINT_PATHS.CREATE, { payload: location })
+    return await this.post(LOCATION_POINT_PATHS.UPDATE, { payload: { location } })
   }
 }
 

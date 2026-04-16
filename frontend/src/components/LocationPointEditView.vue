@@ -1,5 +1,5 @@
 <template>
-  <div class="component-LocationPointEditView shadow" :class="{ small: isState('location') }">
+  <div class="component-LocationPointEditView shadow" :class="{ small: !isState('form') }">
     <button class="blank close-icon no-shadow" @click="closeEdit()"></button>
     <button
       v-if="isState('location')"
@@ -30,13 +30,19 @@
       <button class="save-btn" @click="handleSetState('location')">Select location on map</button>
     </div>
     <button v-if="isState('location')" class="save-btn" @click="submit()">{{ submitText }}</button>
+    <div class="success" v-if="isState('success')">
+      <p>{{ successText }}</p>
+    </div>
+    <div class="error-container" v-if="isState('error')">
+      <p class="error">Unexpected error occured on saving location. Try again later</p>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import { DEFAULT_POINT } from '../constants/map.const'
 import type { LocationPoint } from '../types/location-points'
-import api from '../utils/api';
+import api from '../utils/api'
 
 export default {
   props: {
@@ -49,6 +55,7 @@ export default {
       default: () => ({}),
     },
   },
+  emits: ['locationCreated', 'locationUpdated'],
   data: () => ({
     location: {
       name: '',
@@ -58,7 +65,9 @@ export default {
       longitude: null,
     } as unknown as Partial<LocationPoint>,
 
-    state: 'form' as 'form' | 'location',
+    state: 'form' as 'form' | 'location' | 'success' | 'error',
+
+    showSuccess: false,
   }),
   computed: {
     title(): string {
@@ -69,6 +78,10 @@ export default {
     submitText(): string {
       if (this.selectedLocationId) return 'Confirm & Save'
       return 'Confirm & Create'
+    },
+    successText(): string {
+      if (this.selectedLocationId) return 'Location updated succesfully!'
+      return 'New location created! Thanks for sharing your spot! :)'
     },
     queryParams() {
       return this.$route?.query
@@ -102,11 +115,18 @@ export default {
   },
   methods: {
     async submit(): Promise<void> {
-      console.log("SAVING", this.location)
-      if(!this.selectedLocationId) {
-        await api.createLocation(this.location)
-      } else {
-        
+      console.log('SAVING', this.location)
+      try {
+        if (!this.selectedLocationId) {
+          const newPoint = await api.createLocation(this.location)
+          this.$emit('locationCreated', newPoint)
+        } else {
+          const updatedPoint = await api.updateLocation(this.location)
+          this.$emit('locationUpdated', updatedPoint)
+        }
+        this.handleSuccess()
+      } catch (e) {
+        this.showError()
       }
     },
     setInitial(): void {
@@ -137,6 +157,8 @@ export default {
       this.$router.push({ query: {} })
     },
 
+    handleSuccess(): void {},
+    showError(): void {},
     handleSetState(val: 'form' | 'location'): void {
       this.setState(val)
       if (this.isState('form')) {
@@ -152,11 +174,11 @@ export default {
         })
       }
     },
-    setState(val: 'form' | 'location'): void {
+    setState(val: 'form' | 'location' | 'success' | 'error'): void {
       this.state = val
     },
 
-    isState(val: 'form' | 'location'): boolean {
+    isState(val: 'form' | 'location' | 'success' | 'error'): boolean {
       return this.state === val
     },
   },

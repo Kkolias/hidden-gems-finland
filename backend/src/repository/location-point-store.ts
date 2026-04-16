@@ -44,7 +44,7 @@ export class LocationPointStore {
 
     const r = await db
       .updateTable("location_points")
-      .set(updatePayload)
+      .set({ ...updatePayload, updated_at: new Date().toUTCString() as any })
       .where("id", "=", id)
       .returning(selectFields)
       .executeTakeFirst();

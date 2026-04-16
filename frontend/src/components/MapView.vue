@@ -13,6 +13,8 @@
             v-if="isEditOpen"
             :selectedLocation="selectedLocation"
             :selectedLocationPosition="selectedLocationPosition"
+            @locationCreated="handleLocationCreated"
+            @locationUpdated="handleLocationUpdated"
           />
         </transition>
       </div>
@@ -67,9 +69,9 @@ export default {
     selectedLocation() {
       this.selectedLocationPosition = {
         latitude: this.selectedLocation?.latitude || DEFAULT_POINT.LATITUDE,
-        longitude: this.selectedLocation?.longitude || DEFAULT_POINT.LONGITUDE
+        longitude: this.selectedLocation?.longitude || DEFAULT_POINT.LONGITUDE,
       }
-    }
+    },
   },
   methods: {
     async fetchLocationPoints(): Promise<void> {
@@ -80,6 +82,19 @@ export default {
     },
     openNewEdit(): void {
       this.$router.push({ query: { edit: 'true' } })
+    },
+    handleLocationCreated(location: LocationPoint): void {
+      this.locationPoints = [...this.locationPoints, location]
+    },
+    handleLocationUpdated(location: LocationPoint): void {
+      console.log("UPDATING")
+      this.locationPoints = this.locationPoints.map((l) => {
+        if (l?.id === location?.id) {
+          console.log("FOUND MATCH")
+          return location
+        }
+        return l
+      })
     },
 
     setSelectedLocationPosition(val: { latitude: number; longitude: number }): void {
