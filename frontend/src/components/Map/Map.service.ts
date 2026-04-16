@@ -9,6 +9,7 @@ export class MapService {
 
   map: L.Map | null = null
   markersClusterGroup: L.MarkerClusterGroup | null = null
+  selectableMarker: L.Marker | null = null
 
   initMap() {
     this.map = L.map('map', { zoomAnimation: true }).setView([60.1695, 24.9354], 13)
@@ -59,6 +60,31 @@ export class MapService {
       this.map.remove()
       this.map = null
       this.markersClusterGroup = null
+      this.selectableMarker = null
+    }
+  }
+
+  setSelectableMarker(lat: number, lng: number, onDragEnd?: (lat: number, lng: number) => void): void {
+    if (!this.map) return
+    this.clearSelectableMarker()
+    this.selectableMarker = L.marker([lat, lng], {
+      icon: markerIcon,
+      draggable: true,
+    }).addTo(this.map)
+
+    if (onDragEnd) {
+      this.selectableMarker.on('dragend', (e) => {
+        const marker = e.target as L.Marker
+        const position = marker.getLatLng()
+        onDragEnd(position.lat, position.lng)
+      })
+    }
+  }
+
+  clearSelectableMarker(): void {
+    if (this.selectableMarker && this.map) {
+      this.map.removeLayer(this.selectableMarker)
+      this.selectableMarker = null
     }
   }
 }

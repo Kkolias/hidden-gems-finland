@@ -5,6 +5,7 @@
 </template>
 
 <script lang="ts">
+import { DEFAULT_POINT } from '../../constants/map.const'
 import type { LocationPoint } from '../../types/location-points'
 import { MapService } from './Map.service'
 // import router from '../../router'
@@ -15,14 +16,23 @@ export default {
       type: Array as () => LocationPoint[],
       default: () => [],
     },
+    selectedLocation: {
+      type: Object as () => LocationPoint | null,
+      default: null,
+    },
   },
-  emits: ['edit-location'],
+  emits: ['locationSelected'],
   data: () => ({
     map: null as MapService | null,
     mounted: false,
     setLocationsAfterMount: false,
   }),
-  computed: {},
+  computed: {
+    isSelectLocationMode(): boolean {
+      const queryParams = this.$route?.query
+      return queryParams?.['select-location'] === 'true'
+    },
+  },
   mounted() {
     this.initMap()
   },
@@ -38,10 +48,22 @@ export default {
         if (!this.mounted) {
           this.setLocationsAfterMount = true
         }
-        this.setLocationPoints()
+        if (!this.isSelectLocationMode) {
+          this.setLocationPoints()
+        }
       },
       deep: true,
       immediate: true,
+    },
+    isSelectLocationMode: {
+      handler(isSelecting: boolean) {
+        console.log('MUUTTUU', isSelecting)
+        if (isSelecting) {
+          this.enterSelectLocationMode()
+        } else {
+          this.exitSelectLocationMode()
+        }
+      },
     },
   },
   methods: {
@@ -69,6 +91,20 @@ export default {
     },
     setMounted(val: boolean): void {
       this.mounted = val
+    },
+    enterSelectLocationMode(): void {
+      if (!this.map) return
+      const latitude = this.selectedLocation?.latitude || DEFAULT_POINT.LATITUDE
+      const longitude = this.selectedLocation?.longitude || DEFAULT_POINT.LONGITUDE
+      this.map.clearSelectableMarker()
+      this.map.setLocationPoints([])
+      this.map.setSelectableMarker(latitude, longitude, (lat, lng) => {
+        this.$emit('locationSelected', { latitude: lat, longitude: lng })
+      })
+    },
+    exitSelectLocationMode(): void {
+      this.map?.clearSelectableMarker()
+      this.setLocationPoints()
     },
   },
 }

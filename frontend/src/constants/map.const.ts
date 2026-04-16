@@ -1,0 +1,6 @@
+
+
+export const DEFAULT_POINT = {
+  LATITUDE: 60.192059,
+  LONGITUDE: 24.945831,
+} 

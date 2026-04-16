@@ -1,11 +1,19 @@
 <template>
   <div class="component-MapView">
-    <Map :locationPoints="locationPoints" />
+    <Map
+      :locationPoints="locationPoints"
+      :selectedLocation="selectedLocation"
+      @locationSelected="setSelectedLocationPosition"
+    />
     <div class="map-overlay-items">
       <button class="add-location blank" @click="openNewEdit()"></button>
       <div class="edit-view-wrapper">
         <transition name="show">
-          <LocationPointEditView v-if="isEditOpen" :selectedLocation="selectedLocation" />
+          <LocationPointEditView
+            v-if="isEditOpen"
+            :selectedLocation="selectedLocation"
+            :selectedLocationPosition="selectedLocationPosition"
+          />
         </transition>
       </div>
     </div>
@@ -13,6 +21,7 @@
 </template>
 
 <script lang="ts">
+import { DEFAULT_POINT } from '../constants/map.const'
 import type { LocationPoint } from '../types/location-points'
 import api from '../utils/api'
 import LocationPointEditView from './LocationPointEditView.vue'
@@ -26,6 +35,11 @@ export default {
   data: () => ({
     locationPoints: [] as LocationPoint[],
     loading: false,
+
+    selectedLocationPosition: {
+      latitude: DEFAULT_POINT.LATITUDE,
+      longitude: DEFAULT_POINT.LONGITUDE,
+    },
   }),
   computed: {
     queryParams() {
@@ -49,6 +63,14 @@ export default {
   mounted() {
     this.fetchLocationPoints()
   },
+  watch: {
+    selectedLocation() {
+      this.selectedLocationPosition = {
+        latitude: this.selectedLocation?.latitude || DEFAULT_POINT.LATITUDE,
+        longitude: this.selectedLocation?.longitude || DEFAULT_POINT.LONGITUDE
+      }
+    }
+  },
   methods: {
     async fetchLocationPoints(): Promise<void> {
       this.setLoading(true)
@@ -60,6 +82,9 @@ export default {
       this.$router.push({ query: { edit: 'true' } })
     },
 
+    setSelectedLocationPosition(val: { latitude: number; longitude: number }): void {
+      this.selectedLocationPosition = val
+    },
     setLoading(loading: boolean): void {
       this.loading = loading
     },

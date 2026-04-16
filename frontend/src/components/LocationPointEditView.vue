@@ -1,7 +1,11 @@
 <template>
   <div class="component-LocationPointEditView shadow" :class="{ small: isState('location') }">
     <button class="blank close-icon no-shadow" @click="closeEdit()"></button>
-    <button v-if="isState('location')" class="blank circle back-icon" @click="handleSetState('form')"></button>
+    <button
+      v-if="isState('location')"
+      class="blank circle back-icon"
+      @click="handleSetState('form')"
+    ></button>
     <h2>{{ title }}</h2>
     <div class="form-wrapper" v-if="isState('form')">
       <div class="edit-form">
@@ -30,17 +34,17 @@
 </template>
 
 <script lang="ts">
+import { DEFAULT_POINT } from '../constants/map.const'
 import type { LocationPoint } from '../types/location-points'
-
-const DEFAULT_POINT = {
-  LATITUDE: 60.192059,
-  LONGITUDE: 24.945831,
-}
 
 export default {
   props: {
     selectedLocation: {
       type: Object as () => LocationPoint | null,
+      default: () => ({}),
+    },
+    selectedLocationPosition: {
+      type: Object as () => { latitude: number; longitude: number },
       default: () => ({}),
     },
   },
@@ -87,17 +91,40 @@ export default {
       if (nameInput) nameInput.focus()
     }, 300)
   },
+  watch: {
+    selectedLocationPosition: {
+      handler() {
+        this.setLocationPosition()
+      },
+      immediate: true,
+    },
+  },
   methods: {
-    submit(): void {},
+    submit(): void {
+      console.log("SAVING", this.location)
+    },
     setInitial(): void {
       if (this.selectedLocationId) {
         this.location = {
+          id: this.selectedLocationId,
           name: this.selectedLocation?.name || '',
           city: this.selectedLocation?.city || '',
           description: this.selectedLocation?.description || '',
           latitude: this.selectedLocation?.latitude || DEFAULT_POINT.LATITUDE,
           longitude: this.selectedLocation?.longitude || DEFAULT_POINT.LONGITUDE,
         }
+      }
+    },
+    setLocationPosition(): void {
+      if (!this.selectedLocationPosition?.latitude) return
+
+      const latitude = this.selectedLocationPosition?.latitude
+      const longitude = this.selectedLocationPosition?.longitude
+
+      this.location = {
+        ...this.location,
+        latitude,
+        longitude,
       }
     },
     closeEdit(): void {
@@ -114,7 +141,7 @@ export default {
         this.$router.push({
           query: {
             ...this.queryParams,
-            'select-locaton': 'true',
+            'select-location': 'true',
           },
         })
       }
