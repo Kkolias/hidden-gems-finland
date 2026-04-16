@@ -17,8 +17,30 @@ export class ApiUtil {
     return r?.data || r
   }
 
+  private async post(url: string, { payload }: { payload: unknown }) {
+    const response = await fetch(`${API_URL}${url}`, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    })
+
+    if (!response.ok) {
+      throw new Error(`API request failed with status ${response.status}`)
+    }
+
+    const r = await response.json()
+    return r?.data || r
+  }
+
   async getLocations(): Promise<LocationPoint[]> {
     return await this.get(LOCATION_POINT_PATHS.GET_ALL)
+  }
+
+  async createLocation(location: Partial<LocationPoint>): Promise<LocationPoint> {
+    return await this.post(LOCATION_POINT_PATHS.CREATE, { payload: location })
+  }
+
+  async updateLocation(location: Partial<LocationPoint>): Promise<LocationPoint> {
+    return await this.post(LOCATION_POINT_PATHS.CREATE, { payload: location })
   }
 }
 

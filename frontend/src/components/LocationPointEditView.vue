@@ -36,6 +36,7 @@
 <script lang="ts">
 import { DEFAULT_POINT } from '../constants/map.const'
 import type { LocationPoint } from '../types/location-points'
+import api from '../utils/api';
 
 export default {
   props: {
@@ -100,8 +101,13 @@ export default {
     },
   },
   methods: {
-    submit(): void {
+    async submit(): Promise<void> {
       console.log("SAVING", this.location)
+      if(!this.selectedLocationId) {
+        await api.createLocation(this.location)
+      } else {
+        
+      }
     },
     setInitial(): void {
       if (this.selectedLocationId) {
