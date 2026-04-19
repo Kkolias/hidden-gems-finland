@@ -14,8 +14,11 @@ const LOCATION_POINT_PATHS = {
   TEST: `${LOCATION_POINT_PREFIX}/test`,
 };
 
+const MINUTE_IN_MS = 60 * 1000;
+const HOUR_IN_MS = 60 * MINUTE_IN_MS;
+
 const createLimiter = rateLimit({
-  windowMs: 60 * 60 * 1000,
+  windowMs: HOUR_IN_MS,
   limit: 5,
   message: { error: "Too many locations created, please try again later" },
   standardHeaders: true,
@@ -26,8 +29,8 @@ const createLimiter = rateLimit({
 });
 
 const updateLimiter = rateLimit({
-  windowMs: 60 * 1000,
-  limit: 10,
+  windowMs: MINUTE_IN_MS,
+  limit: 5,
   message: { error: "Too many update requests, please try again later" },
   standardHeaders: true,
   legacyHeaders: false,
