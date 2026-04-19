@@ -5,14 +5,20 @@
         <a href="/">Hidden Gems Finland</a>
       </div>
       <div class="right">
-        <a href="/about">About</a>
+        <a href="/about" :class="{ active: isActive('/about') }">About</a>
       </div>
     </nav>
   </div>
 </template>
 
 <script lang="ts">
-export default {}
+export default {
+  methods: {
+    isActive(path: string) {
+      return this.$route.path === path
+    },
+  },
+}
 </script>
 
 <style lang="less" scoped>
@@ -31,6 +37,10 @@ export default {}
     a {
       text-decoration: none;
       font-weight: 600;
+
+      &.active {
+        text-decoration: underline;
+      }
     }
   }
 }

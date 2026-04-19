@@ -15,8 +15,9 @@
     <transition name="slide">
       <div v-if="isOpen" class="menu">
         <ul class="menu-list">
-          <!-- <li class="menu-item"><a href="#">Home</a></li> -->
-          <li class="menu-item"><a href="/about">About</a></li>
+          <li class="menu-item">
+            <a href="/about" :class="{ active: isActive('/about') }">About</a>
+          </li>
         </ul>
       </div>
     </transition>
@@ -33,6 +34,9 @@ export default {
   methods: {
     toggleMenu() {
       this.isOpen = !this.isOpen
+    },
+    isActive(path: string) {
+      return this.$route.path === path
     },
   },
 }
@@ -141,6 +145,10 @@ export default {
     color: @text;
     font-size: 24px;
     text-decoration: none;
+
+    &.active {
+      text-decoration: underline;
+    }
   }
 }
 
