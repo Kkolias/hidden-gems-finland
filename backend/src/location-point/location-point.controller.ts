@@ -1,4 +1,4 @@
-import { ADMIN_KEY } from "../constants/env.const";
+import { rateLimit, ipKeyGenerator } from "express-rate-limit";
 import { LocationPointUpdate, NewLocationPoint } from "../types/db";
 import { isAdmin } from "../utils/isAdmin";
 import locationPointService from "./location-point.service";
@@ -13,6 +13,28 @@ const LOCATION_POINT_PATHS = {
   CHECK_LOCATIONS: `${LOCATION_POINT_PREFIX}/check-locations`,
   TEST: `${LOCATION_POINT_PREFIX}/test`,
 };
+
+const createLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  limit: 5,
+  message: { error: "Too many locations created, please try again later" },
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: (req) => {
+    return ipKeyGenerator(req.ip || "");
+  },
+});
+
+const updateLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  limit: 10,
+  message: { error: "Too many update requests, please try again later" },
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: (req) => {
+    return ipKeyGenerator(req.ip || "");
+  },
+});
 
 const router = Router();
 
@@ -45,6 +67,7 @@ router.get(
 
 router.post(
   LOCATION_POINT_PATHS.CREATE,
+  createLimiter,
   tryCatchWrapper(async (req: Request, res) => {
     const body = req?.body as any;
     const location = body?.location as NewLocationPoint;
@@ -56,6 +79,7 @@ router.post(
 
 router.post(
   LOCATION_POINT_PATHS.UPDATE,
+  updateLimiter,
   tryCatchWrapper(async (req: Request, res) => {
     const body = req?.body as any;
     const location = body?.location as LocationPointUpdate;
