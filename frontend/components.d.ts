@@ -11,6 +11,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    AboutPage: typeof import('./src/components/AboutPage.vue')['default']
     LocationPointEditView: typeof import('./src/components/LocationPointEditView.vue')['default']
     Map: typeof import('./src/components/Map/Map.vue')['default']
     MapView: typeof import('./src/components/MapView.vue')['default']

@@ -1,6 +1,6 @@
 <template>
   <div class="component-Navbar">
-    <nav class="navbar">
+    <nav class="navbar" :class="{ shadow: !isOpen }">
       <div class="navbar-left">
         <span class="name-short">HGF</span>
         <span class="name-long">Hidden Gems Finland</span>
