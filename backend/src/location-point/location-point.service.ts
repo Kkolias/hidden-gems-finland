@@ -4,6 +4,7 @@ import {
   LocationPointUpdate,
   NewLocationPoint,
 } from "../types/db";
+import { checkPointNameAndDescription } from "./utils/checkPointNameAndDescription";
 
 export class LocationPointService {
   readonly repositoryService = repositoryService;
@@ -22,6 +23,12 @@ export class LocationPointService {
     savePayload: NewLocationPoint,
   ): Promise<LocationPoint> {
     return await this.repositoryService.locationPointStore.create(savePayload);
+  }
+
+  async checkPointNameAndDescription(): Promise<{
+    affected: number;
+  }> {
+    return await checkPointNameAndDescription();
   }
 }
 

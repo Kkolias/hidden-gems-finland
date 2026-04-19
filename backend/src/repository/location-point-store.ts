@@ -51,6 +51,30 @@ export class LocationPointStore {
 
     return r as LocationPoint;
   }
+
+  async updateListNameAndDescription(
+    points: { id: number; name: string; description: string }[],
+  ): Promise<boolean> {
+    const trx = await db.startTransaction().execute();
+    try {
+      for (const point of points) {
+        await trx
+          .updateTable("location_points")
+          .set({
+            name: point.name,
+            description: point.description,
+            updated_at: new Date().toUTCString() as any,
+          })
+          .where("id", "=", point.id)
+          .execute();
+      }
+      await trx.commit().execute();
+      return true;
+    } catch (error) {
+      await trx.rollback().execute();
+      throw error;
+    }
+  }
 }
 
 export default new LocationPointStore();
