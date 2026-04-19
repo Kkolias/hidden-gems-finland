@@ -34,7 +34,7 @@ export const customInfoWindow = (content: LocationPoint): string => {
 
   return `
   <div class="custom-info-window">
-    <button class="blank edit-location" id="edit-location-btn"></button>
+    <button class="blank edit-location no-shadow" id="edit-location-btn"></button>
     ${headerSection}
     ${citySection}
     ${descriptionSection}

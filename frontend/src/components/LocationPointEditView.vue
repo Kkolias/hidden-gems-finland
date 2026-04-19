@@ -217,7 +217,7 @@ export default {
     position: absolute;
     top: 6px;
     right: 6px;
-    background-image: url('/close-icon.svg');
+    background-image: url('/close-icon-white.svg');
     background-size: contain;
     width: 30px;
     height: 30px;

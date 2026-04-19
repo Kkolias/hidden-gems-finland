@@ -6,9 +6,9 @@
         <span class="name-long">Hidden Gems Finland</span>
       </div>
 
-      <button class="menu-button no-shadow" @click="toggleMenu">
-        <span v-if="!isOpen">☰</span>
-        <span v-else>✕</span>
+      <button class="menu-button no-shadow blank" @click="toggleMenu">
+        <span v-if="!isOpen" class="menu-icon"></span>
+        <span v-else class="close-icon"></span>
       </button>
     </nav>
 
@@ -16,14 +16,14 @@
       <div v-if="isOpen" class="menu">
         <ul class="menu-list">
           <!-- <li class="menu-item"><a href="#">Home</a></li> -->
-          <li class="menu-item"><a href="#">About</a></li>
+          <li class="menu-item"><a href="/about">About</a></li>
         </ul>
       </div>
     </transition>
   </div>
 </template>
 
-<script>
+<script lang="ts">
 export default {
   data() {
     return {
@@ -89,6 +89,26 @@ export default {
   color: @text;
   font-size: 24px;
   cursor: pointer;
+
+  .menu-icon {
+    width: 28px;
+    height: 24px;
+    background-image: url('/menu-icon-white.svg');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    display: block;
+  }
+
+  .close-icon {
+    width: 34px;
+    height: 34px;
+    background-image: url('/close-icon-white.svg');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    display: block;
+  }
 }
 
 .menu {

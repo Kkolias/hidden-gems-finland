@@ -7,11 +7,9 @@
 
 <script lang="ts">
 import NavbarDesktop from './NavbarDesktop.vue'
-import NavbarMobile from './NavbarMobile.vue'
 export default {
   components: {
-    NavbarDesktop,
-    NavbarMobile,
+    NavbarDesktop
   },
 }
 </script>
