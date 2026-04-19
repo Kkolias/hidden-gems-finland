@@ -14,6 +14,9 @@ declare module 'vue' {
     LocationPointEditView: typeof import('./src/components/LocationPointEditView.vue')['default']
     Map: typeof import('./src/components/Map/Map.vue')['default']
     MapView: typeof import('./src/components/MapView.vue')['default']
+    Navbar: typeof import('./src/components/Navbar/Navbar.vue')['default']
+    NavbarDesktop: typeof import('./src/components/Navbar/NavbarDesktop.vue')['default']
+    NavbarMobile: typeof import('./src/components/Navbar/NavbarMobile.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }

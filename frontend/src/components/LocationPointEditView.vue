@@ -115,7 +115,6 @@ export default {
   },
   methods: {
     async submit(): Promise<void> {
-      console.log('SAVING', this.location)
       try {
         if (!this.selectedLocationId) {
           const newPoint = await api.createLocation(this.location)
@@ -157,8 +156,15 @@ export default {
       this.$router.push({ query: {} })
     },
 
-    handleSuccess(): void {},
-    showError(): void {},
+    handleSuccess(): void {
+      this.setState('success')
+      setTimeout(() => {
+        this.closeEdit()
+      }, 2000)
+    },
+    showError(): void {
+      this.setState('error')
+    },
     handleSetState(val: 'form' | 'location'): void {
       this.setState(val)
       if (this.isState('form')) {

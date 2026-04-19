@@ -87,10 +87,8 @@ export default {
       this.locationPoints = [...this.locationPoints, location]
     },
     handleLocationUpdated(location: LocationPoint): void {
-      console.log("UPDATING")
       this.locationPoints = this.locationPoints.map((l) => {
         if (l?.id === location?.id) {
-          console.log("FOUND MATCH")
           return location
         }
         return l

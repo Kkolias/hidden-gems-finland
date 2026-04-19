@@ -113,6 +113,11 @@ export default {
 <style lang="less" scoped>
 .component-Map {
   height: 100vh;
+
+  @media (min-width: 1090px) {
+    height: calc(100vh - 60px);
+  }
+
   .map {
     height: 100%;
     width: 100%;

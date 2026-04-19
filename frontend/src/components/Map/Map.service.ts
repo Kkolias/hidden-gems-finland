@@ -12,10 +12,14 @@ export class MapService {
   selectableMarker: L.Marker | null = null
 
   initMap() {
-    this.map = L.map('map', { zoomAnimation: true }).setView([60.1695, 24.9354], 13)
+    this.map = L.map('map', { zoomAnimation: true, zoomControl: false }).setView(
+      [60.1695, 24.9354],
+      13,
+    )
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '© OpenStreetMap contributors',
     }).addTo(this.map as L.Map)
+    L.control.zoom({ position: 'bottomleft' }).addTo(this.map)
 
     this.markersClusterGroup = L.markerClusterGroup({
       animate: false,
@@ -23,7 +27,10 @@ export class MapService {
     this.map.addLayer(this.markersClusterGroup)
   }
 
-  setLocationPoints(locationPoints: LocationPoint[], onEditClick?: (point: LocationPoint) => void): void {
+  setLocationPoints(
+    locationPoints: LocationPoint[],
+    onEditClick?: (point: LocationPoint) => void,
+  ): void {
     if (!this.markersClusterGroup) {
       return
     }
@@ -32,7 +39,7 @@ export class MapService {
       const marker = L.marker([point.latitude, point.longitude], {
         icon: markerIcon,
       }).bindPopup(customInfoWindow(point), customInfoWindowOptions)
-      
+
       if (onEditClick) {
         marker.on('popupopen', () => {
           const popup = marker.getPopup()
@@ -50,7 +57,7 @@ export class MapService {
           }
         })
       }
-      
+
       this.markersClusterGroup!.addLayer(marker)
     })
   }
@@ -64,7 +71,11 @@ export class MapService {
     }
   }
 
-  setSelectableMarker(lat: number, lng: number, onDragEnd?: (lat: number, lng: number) => void): void {
+  setSelectableMarker(
+    lat: number,
+    lng: number,
+    onDragEnd?: (lat: number, lng: number) => void,
+  ): void {
     if (!this.map) return
     this.clearSelectableMarker()
     this.selectableMarker = L.marker([lat, lng], {
