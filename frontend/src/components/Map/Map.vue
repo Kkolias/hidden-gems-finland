@@ -94,8 +94,21 @@ export default {
     },
     enterSelectLocationMode(): void {
       if (!this.map) return
-      const latitude = this.selectedLocation?.latitude || DEFAULT_POINT.LATITUDE
-      const longitude = this.selectedLocation?.longitude || DEFAULT_POINT.LONGITUDE
+      const defLatitude = this.selectedLocation?.latitude || null
+      const defLongitude = this.selectedLocation?.longitude || null
+
+      let latitude: number
+      let longitude: number
+      if (!defLatitude || !defLongitude) {
+        const mapCenter = this.map.getMapCenter()
+        if (!mapCenter) return
+        latitude = mapCenter.lat
+        longitude = mapCenter.lng
+      } else {
+        latitude = defLatitude
+        longitude = defLongitude
+      }
+
       this.map.clearSelectableMarker()
       this.map.setLocationPoints([])
       this.map.setSelectableMarker(latitude, longitude, (lat, lng) => {

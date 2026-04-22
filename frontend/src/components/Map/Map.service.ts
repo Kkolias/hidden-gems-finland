@@ -98,4 +98,10 @@ export class MapService {
       this.selectableMarker = null
     }
   }
+
+  getMapCenter(): { lat: number; lng: number } | null {
+    if (!this.map) return null
+    const center = this.map.getCenter()
+    return { lat: center.lat, lng: center.lng }
+  }
 }
