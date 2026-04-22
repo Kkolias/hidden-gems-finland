@@ -97,6 +97,15 @@ export default {
       if (isNaN(p)) return null
       return p
     },
+    locationWithParsedPosition(): Partial<LocationPoint> {
+      const latitude = Number(this.location.latitude)
+      const longitude = Number(this.location.longitude)
+      return {
+        ...this.location,
+        latitude,
+        longitude,
+      }
+    },
   },
   mounted() {
     this.setInitial()
@@ -117,10 +126,10 @@ export default {
     async submit(): Promise<void> {
       try {
         if (!this.selectedLocationId) {
-          const newPoint = await api.createLocation(this.location)
+          const newPoint = await api.createLocation(this.locationWithParsedPosition)
           this.$emit('locationCreated', newPoint)
         } else {
-          const updatedPoint = await api.updateLocation(this.location)
+          const updatedPoint = await api.updateLocation(this.locationWithParsedPosition)
           this.$emit('locationUpdated', updatedPoint)
         }
         this.handleSuccess()

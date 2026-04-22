@@ -3,6 +3,8 @@ import { LocationPointUpdate, NewLocationPoint } from "../types/db";
 import { isAdmin } from "../utils/isAdmin";
 import locationPointService from "./location-point.service";
 import { Router, Request } from "express";
+import { validateBody } from "../utils/validateBody";
+import { CreateLocationDto, UpdateLocationDto } from "./dto/location-point.dto";
 
 const LOCATION_POINT_PREFIX = "/location-points";
 
@@ -74,6 +76,14 @@ router.post(
   tryCatchWrapper(async (req: Request, res) => {
     const body = req?.body as any;
     const location = body?.location as NewLocationPoint;
+
+    const errors = await validateBody(CreateLocationDto, location);
+    if (errors) {
+      return res
+        .status(400)
+        .json({ error: "Invalid payload", details: errors });
+    }
+
     const locationPoints =
       await locationPointService.createLocationPoint(location);
     res.json(locationPoints);
@@ -86,6 +96,14 @@ router.post(
   tryCatchWrapper(async (req: Request, res) => {
     const body = req?.body as any;
     const location = body?.location as LocationPointUpdate;
+
+    const errors = await validateBody(UpdateLocationDto, location);
+    if (errors) {
+      return res
+        .status(400)
+        .json({ error: "Invalid payload", details: errors });
+    }
+
     const locationPoints =
       await locationPointService.updateLocationPoint(location);
     res.json(locationPoints);
