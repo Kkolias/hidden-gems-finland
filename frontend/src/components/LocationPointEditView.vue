@@ -68,6 +68,7 @@ export default {
     state: 'form' as 'form' | 'location' | 'success' | 'error',
 
     showSuccess: false,
+    mounted: false,
   }),
   computed: {
     title(): string {
@@ -121,6 +122,9 @@ export default {
       },
       immediate: true,
     },
+    selectedLocation() {
+      this.setInitial()
+    },
   },
   methods: {
     async submit(): Promise<void> {
@@ -138,7 +142,10 @@ export default {
       }
     },
     setInitial(): void {
-      if (this.selectedLocationId) {
+      if (this.mounted) {
+        return
+      }
+      if (this.selectedLocationId && this.selectedLocation) {
         this.location = {
           id: this.selectedLocationId,
           name: this.selectedLocation?.name || '',
@@ -147,6 +154,7 @@ export default {
           latitude: this.selectedLocation?.latitude || DEFAULT_POINT.LATITUDE,
           longitude: this.selectedLocation?.longitude || DEFAULT_POINT.LONGITUDE,
         }
+        this.mounted = true
       }
     },
     setLocationPosition(): void {
