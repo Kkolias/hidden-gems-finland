@@ -12,6 +12,7 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     AboutPage: typeof import('./src/components/AboutPage.vue')['default']
+    BuyMeACoffee: typeof import('./src/components/BuyMeACoffee.vue')['default']
     HiddenGemsLogo: typeof import('./src/components/HiddenGemsLogo.vue')['default']
     LocationPointEditView: typeof import('./src/components/LocationPointEditView.vue')['default']
     Map: typeof import('./src/components/Map/Map.vue')['default']

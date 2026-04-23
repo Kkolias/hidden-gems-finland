@@ -27,6 +27,16 @@
           ><b>Hidden Finland Map</b></a
         >. This project exists as an evolution of that idea, not a replacement.
       </p>
+      <p>
+        Running this website does come with real expenses — primarily hosting and domain costs. If
+        you find value in this project and want to help keep it running, consider supporting via
+        <a href="https://buymeacoffee.com/kkoliasdevaa" target="_blank" rel="noopener noreferrer"
+          >Buy Me a Coffee</a
+        >. Every bit helps, and it directly contributes to keeping this map alive for years to come.
+      </p>
+    </div>
+    <div class="bottom-section">
+      <BuyMeACoffee />
     </div>
   </div>
 </template>
@@ -49,6 +59,12 @@ export default {}
     p {
       margin: 16px 0;
     }
+  }
+
+  .bottom-section {
+    margin-top: 48px;
+    display: flex;
+    justify-content: center;
   }
 
   @media (max-width: 600px) {
