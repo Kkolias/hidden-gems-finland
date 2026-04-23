@@ -1,6 +1,7 @@
 import { Database } from "./types/db"; // this is the Database interface we defined earlier
 import { Pool } from "pg";
 import { Kysely, PostgresDialect } from "kysely";
+// DEV
 // import "dotenv/config";
 
 const DATABASE_NAME = process.env.DATABASE_NAME;

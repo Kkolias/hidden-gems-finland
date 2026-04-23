@@ -1,5 +1,4 @@
 // for DEV
-// import dotenv from "dotenv";
-// dotenv.config();
+// import "dotenv/config";
 
 export const ADMIN_KEY = process.env.ADMIN_KEY;
