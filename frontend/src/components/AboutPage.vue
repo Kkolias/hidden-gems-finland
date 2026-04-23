@@ -34,6 +34,21 @@
           >Buy Me a Coffee</a
         >. Every bit helps, and it directly contributes to keeping this map alive for years to come.
       </p>
+      <p>
+        Have questions, feedback, or just want to say hi? Reach out:
+      </p>
+      <ul>
+        <li>
+          Email:
+          <a href="mailto:dev.elias.koivuporras@gmail.com">dev.elias.koivuporras@gmail.com</a>
+        </li>
+        <li>
+          X (Twitter):
+          <a href="https://x.com/Kkolias_Devaa" target="_blank" rel="noopener noreferrer"
+            >@Kkolias_Devaa</a
+          >
+        </li>
+      </ul>
     </div>
     <div class="bottom-section">
       <BuyMeACoffee />
