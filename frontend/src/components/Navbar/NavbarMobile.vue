@@ -2,8 +2,7 @@
   <div class="component-Navbar">
     <nav class="navbar" :class="{ shadow: !isOpen }">
       <div class="navbar-left">
-        <span class="name-short">HGF</span>
-        <span class="name-long">Hidden Gems Finland</span>
+        <HiddenGemsLogo />
       </div>
 
       <button class="menu-button no-shadow blank" @click="toggleMenu">

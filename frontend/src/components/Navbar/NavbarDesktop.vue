@@ -2,7 +2,7 @@
   <div class="component-NavbarDesktop shadow">
     <nav>
       <div class="left">
-        <a href="/">Hidden Gems Finland</a>
+        <HiddenGemsLogo />
       </div>
       <div class="right">
         <a href="/about" :class="{ active: isActive('/about') }">About</a>
