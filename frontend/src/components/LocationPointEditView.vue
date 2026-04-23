@@ -36,6 +36,9 @@
     <div class="error-container" v-if="isState('error')">
       <p class="error">Unexpected error occured on saving location. Try again later</p>
     </div>
+    <div class="terms-link">
+      <a href="/terms" target="_blank">Terms of Service</a>
+    </div>
   </div>
 </template>
 
@@ -281,6 +284,14 @@ export default {
     flex-direction: column;
     align-items: center;
     .save-btn {
+    }
+  }
+
+  .terms-link {
+    margin-top: 8px;
+    a {
+      opacity: 0.6;
+      font-size: 1.2rem;
     }
   }
 
