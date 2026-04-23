@@ -48,6 +48,9 @@
             >@Kkolias_Devaa</a
           >
         </li>
+        <li>
+          <a href="/terms">Terms of Service</a>
+        </li>
       </ul>
     </div>
     <div class="bottom-section">
