@@ -5,7 +5,7 @@
 </template>
 
 <script lang="ts">
-import { DEFAULT_POINT } from '../../constants/map.const'
+// import { DEFAULT_POINT } from '../../constants/map.const'
 import type { LocationPoint } from '../../types/location-points'
 import { MapService } from './Map.service'
 // import router from '../../router'
