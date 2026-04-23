@@ -27,9 +27,12 @@ html {
 
 body {
   margin: 0;
-  // overflow: hidden;
   color: var(--white);
   background-color: var(--bg-dark);
+}
+
+body:has(.no-overflow) {
+  overflow: hidden;
 }
 
 h1,

@@ -225,6 +225,7 @@ export default {
   gap: 16px;
   align-items: center;
   transition: height 0.3s ease-in;
+  overflow: auto;
 
   &.small {
     height: 15vh;

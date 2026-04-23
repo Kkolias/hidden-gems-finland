@@ -1,12 +1,10 @@
 import type { LocationPoint } from '../../types/location-points'
 
 export const customInfoWindow = (content: LocationPoint): string => {
-
   const noHeader = !content?.name || content?.name === 'Unnamed Location'
   const headerName = noHeader ? content?.description || '' : content.name
 
   let headerSection = `<h3 class="big">${headerName}</h3>`
-  
 
   let citySection = ''
   if (content?.city) {
@@ -23,14 +21,13 @@ export const customInfoWindow = (content: LocationPoint): string => {
     </div>`
   }
   let categorySection = ''
-  if(content?.category) {
+  if (content?.category) {
     categorySection = `
     <div class="category-container margin-container">
     <span class="label">Category</span>
     <p>${content.category}</p>
     </div>`
   }
-
 
   return `
   <div class="custom-info-window">
@@ -39,10 +36,10 @@ export const customInfoWindow = (content: LocationPoint): string => {
     ${citySection}
     ${descriptionSection}
     ${categorySection}
-    ${content.image_url ? `<img src="${content.image_url}" alt="${content.name}" class="info-window-image"/>` : ''}
-  </div>
-  `.trim()
+    </div>
+    `.trim()
 }
+// ${content.image_url ? `<img src="${content.image_url}" alt="${content.name}" class="info-window-image"/>` : ''}
 
 export const customInfoWindowOptions = {
   maxWidth: 300,

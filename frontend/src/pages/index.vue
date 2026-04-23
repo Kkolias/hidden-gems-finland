@@ -1,5 +1,5 @@
 <template>
-  <div class="page-home">
+  <div class="page-home no-overflow">
     <Navbar />
     <MapView />
   </div>
