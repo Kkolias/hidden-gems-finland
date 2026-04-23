@@ -12,7 +12,7 @@ const corsOptions = {
 const app = express();
 app.use(cors(corsOptions));
 app.use(express.json());
-const PORT = process.env.PORT || 3030;
+const PORT = process.env.PORT as unknown as number || 3030;
 
 app.get('/', (_req, res) => {
   res.send('Hello, World!');
@@ -20,6 +20,9 @@ app.get('/', (_req, res) => {
 
 app.use(endpoints)
 
-app.listen(PORT, () => {
+// app.listen(PORT, () => {
+//   console.log(`Server is running on port ${PORT}`);
+// });
+app.listen(PORT, "0.0.0.0", () => {
   console.log(`Server is running on port ${PORT}`);
 });

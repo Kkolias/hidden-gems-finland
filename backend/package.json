@@ -10,7 +10,9 @@
     "compose:up": "docker-compose up -d",
     "compose:down": "docker-compose down",
     "migrate:latest": "ts-node src/scripts/migrateToLatest.ts",
-    "convert-old": "ts-node src/scripts/oldMarkersToLocationPoints.ts"
+    "migrate:prod": "node dist/scripts/migrateToLatest.js",
+    "convert-old": "ts-node src/scripts/oldMarkersToLocationPoints.ts",
+    "convert-old-prod": "node dist/scripts/oldMarkersToLocationPoints.js"
   },
   "keywords": [],
   "author": "",
@@ -26,6 +28,7 @@
     "pg": "^8.20.0"
   },
   "devDependencies": {
+    "@flydotio/dockerfile": "^0.7.10",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/node": "^25.5.2",
