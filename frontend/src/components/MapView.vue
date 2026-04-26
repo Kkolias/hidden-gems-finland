@@ -6,6 +6,11 @@
       @locationSelected="setSelectedLocationPosition"
     />
     <div class="map-overlay-items">
+      <transition name="slide">
+        <div class="loading-markers-container shadow" v-if="loading">
+          <span>Loading locations...</span>
+        </div>
+      </transition>
       <button class="add-location blank" @click="openNewEdit()"></button>
       <div class="edit-view-wrapper">
         <transition name="show">
@@ -36,7 +41,7 @@ export default {
   },
   data: () => ({
     locationPoints: [] as LocationPoint[],
-    loading: false,
+    loading: true,
 
     selectedLocationPosition: {
       latitude: DEFAULT_POINT.LATITUDE,
@@ -113,6 +118,28 @@ export default {
   .map-overlay-items {
     position: relative;
     z-index: 10000;
+
+    .loading-markers-container {
+      position: absolute;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--bg-dark);
+      padding: 8px 16px;
+      border-radius: 10px;
+    }
+    .slide-enter-active,
+    .slide-leave-active {
+      transition: all 0.4s ease-out;
+    }
+    .slide-enter-from,
+    .slide-leave-to {
+      transform: translateY(300%) translateX(-50%);
+    }
+    .slide-enter-to,
+    .slide-leave-from {
+      transform: translateY(0) translateX(-50%);
+    }
 
     .edit-view-wrapper {
       position: absolute;
