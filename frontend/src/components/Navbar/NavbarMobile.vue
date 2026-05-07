@@ -120,6 +120,7 @@ export default {
   right: 0;
   width: 100%;
   height: 100vh;
+  height: 100dvh;
   background: @bg;
   color: @text;
 

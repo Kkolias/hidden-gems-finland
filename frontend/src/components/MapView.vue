@@ -168,8 +168,9 @@ export default {
 
     .add-location {
       position: absolute;
-      bottom: 60px;
-      right: 60px;
+      bottom: 12vh;
+      bottom: 12dvh;
+      right: 20px;
 
       width: 40px;
       height: 40px;
