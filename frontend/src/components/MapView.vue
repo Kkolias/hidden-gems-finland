@@ -120,8 +120,9 @@ export default {
     z-index: 10000;
 
     .loading-markers-container {
-      position: absolute;
-      bottom: 80px;
+      position: fixed;
+      bottom: 8vh;
+      bottom: 8dvh;
       left: 50%;
       transform: translateX(-50%);
       background: var(--bg-dark);
@@ -167,9 +168,9 @@ export default {
     }
 
     .add-location {
-      position: absolute;
-      bottom: 12vh;
-      bottom: 12dvh;
+      position: fixed;
+      bottom: 4vh;
+      bottom: 4dvh;
       right: 20px;
 
       width: 40px;
