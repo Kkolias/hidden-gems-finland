@@ -1,4 +1,5 @@
 import { LOCATION_POINT_PATHS } from '../constants/api.const'
+import type { DirectionRouteResult } from '../types/direction-route-result'
 import type { LocationPoint } from '../types/location-points'
 
 const API_URL = import.meta.env.VITE_API_BASE_URL
@@ -42,6 +43,15 @@ export class ApiUtil {
 
   async updateLocation(location: Partial<LocationPoint>): Promise<LocationPoint> {
     return await this.post(LOCATION_POINT_PATHS.UPDATE, { payload: { location } })
+  }
+
+  async getRouteBetweenPoints(coordinates: {
+    startLat: number
+    startLng: number
+    endLat: number
+    endLng: number
+  }): Promise<DirectionRouteResult> {
+    return await this.get(LOCATION_POINT_PATHS.GET_ROUTE, coordinates)
   }
 }
 

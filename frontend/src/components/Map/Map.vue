@@ -20,12 +20,17 @@ export default {
       type: Object as () => LocationPoint | null,
       default: null,
     },
+    routeMode: {
+      type: Boolean,
+      default: false,
+    },
   },
-  emits: ['locationSelected'],
+  emits: ['locationSelected', 'routePointsSelected'],
   data: () => ({
     map: null as MapService | null,
     mounted: false,
     setLocationsAfterMount: false,
+    routeStep: 'idle' as 'idle' | 'start' | 'end' | 'complete',
   }),
   computed: {
     isSelectLocationMode(): boolean {
@@ -48,7 +53,7 @@ export default {
         if (!this.mounted) {
           this.setLocationsAfterMount = true
         }
-        if (!this.isSelectLocationMode) {
+        if (!this.isSelectLocationMode && !this.routeMode) {
           this.setLocationPoints()
         }
       },
@@ -62,6 +67,15 @@ export default {
           this.enterSelectLocationMode()
         } else {
           this.exitSelectLocationMode()
+        }
+      },
+    },
+    routeMode: {
+      handler(isActive: boolean) {
+        if (isActive) {
+          this.enterRouteMode()
+        } else {
+          this.exitRouteMode()
         }
       },
     },
@@ -118,6 +132,43 @@ export default {
     exitSelectLocationMode(): void {
       this.map?.clearSelectableMarker()
       this.setLocationPoints()
+    },
+
+    enterRouteMode(): void {
+      if (!this.map) return
+      this.routeStep = 'start'
+      this.map.clearLocationPoints()
+      this.map.addMapClickListener((lat: number, lng: number) => {
+        this.handleRouteMapClick(lat, lng)
+      })
+    },
+
+    exitRouteMode(): void {
+      this.routeStep = 'idle'
+      this.map?.removeMapClickListener()
+      this.map?.clearRouteMarkers()
+      this.setLocationPoints()
+    },
+
+    async handleRouteMapClick(lat: number, lng: number): Promise<void> {
+      if (this.routeStep === 'start') {
+        this.map?.setRouteStartMarker(lat, lng)
+        this.routeStep = 'end'
+      } else if (this.routeStep === 'end') {
+        this.map?.setRouteEndMarker(lat, lng)
+        this.routeStep = 'complete'
+        this.map?.removeMapClickListener()
+
+        const startPos = this.map?.getStartPosition()
+        const endPos = this.map?.getEndPosition()
+        if (startPos && endPos) {
+          this.map?.fetchRoute(startPos.lat, startPos.lng, endPos.lat, endPos.lng)
+          this.$emit('routePointsSelected', {
+            start: { latitude: startPos.lat, longitude: startPos.lng },
+            end: { latitude: endPos.lat, longitude: endPos.lng },
+          })
+        }
+      }
     },
   },
 }

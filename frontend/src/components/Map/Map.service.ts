@@ -3,6 +3,7 @@ import 'leaflet.markercluster'
 import type { LocationPoint } from '../../types/location-points'
 import { markerIcon } from '../../constants/marker.const'
 import { customInfoWindow, customInfoWindowOptions } from './Map.infoWindow'
+import { MapDirections } from './mapDirections.service'
 
 export class MapService {
   constructor() {}
@@ -10,6 +11,8 @@ export class MapService {
   map: L.Map | null = null
   markersClusterGroup: L.MarkerClusterGroup | null = null
   selectableMarker: L.Marker | null = null
+  directionsService: MapDirections | null = null
+  routeClickHandler: ((e: L.LeafletMouseEvent) => void) | null = null
 
   initMap() {
     this.map = L.map('map', { zoomAnimation: true, zoomControl: false }).setView(
@@ -25,6 +28,8 @@ export class MapService {
       animate: false,
     })
     this.map.addLayer(this.markersClusterGroup)
+
+    this.directionsService = new MapDirections(this.map)
   }
 
   setLocationPoints(
@@ -64,6 +69,9 @@ export class MapService {
 
   removeMap() {
     if (this.map) {
+      this.removeMapClickListener()
+      this.directionsService?.clearRoute()
+      this.directionsService = null
       this.map.remove()
       this.map = null
       this.markersClusterGroup = null
@@ -103,5 +111,58 @@ export class MapService {
     if (!this.map) return null
     const center = this.map.getCenter()
     return { lat: center.lat, lng: center.lng }
+  }
+
+  clearLocationPoints(): void {
+    this.markersClusterGroup?.clearLayers()
+  }
+
+  setRouteStartMarker(lat: number, lng: number): void {
+    this.directionsService?.setStartMarker(lat, lng)
+  }
+
+  setRouteEndMarker(lat: number, lng: number): void {
+    this.directionsService?.setEndMarker(lat, lng)
+  }
+
+  clearRouteMarkers(): void {
+    this.directionsService?.clearRoute()
+  }
+
+  drawRouteLine(
+    startLat: number,
+    startLng: number,
+    endLat: number,
+    endLng: number,
+  ): void {
+    this.directionsService?.drawRouteLine(startLat, startLng, endLat, endLng)
+  }
+
+  addMapClickListener(handler: (lat: number, lng: number) => void): void {
+    if (!this.map) return
+    this.removeMapClickListener()
+    this.routeClickHandler = (e: L.LeafletMouseEvent) => {
+      handler(e.latlng.lat, e.latlng.lng)
+    }
+    this.map.on('click', this.routeClickHandler)
+  }
+
+  removeMapClickListener(): void {
+    if (this.map && this.routeClickHandler) {
+      this.map.off('click', this.routeClickHandler)
+      this.routeClickHandler = null
+    }
+  }
+
+  async fetchRoute(startLat: number, startLng: number, endLat: number, endLng: number): Promise<void> {
+    return this.directionsService?.fetchRoute(startLat, startLng, endLat, endLng)
+  }
+
+  getStartPosition(): { lat: number; lng: number } | null {
+    return this.directionsService?.getStartPosition() || null
+  }
+
+  getEndPosition(): { lat: number; lng: number } | null {
+    return this.directionsService?.getEndPosition() || null
   }
 }
