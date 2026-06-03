@@ -117,12 +117,12 @@ export class MapService {
     this.markersClusterGroup?.clearLayers()
   }
 
-  setRouteStartMarker(lat: number, lng: number): void {
-    this.directionsService?.setStartMarker(lat, lng)
+  setRouteStartMarker(lat: number, lng: number, onDragEnd?: (lat: number, lng: number) => void): void {
+    this.directionsService?.setStartMarker(lat, lng, onDragEnd)
   }
 
-  setRouteEndMarker(lat: number, lng: number): void {
-    this.directionsService?.setEndMarker(lat, lng)
+  setRouteEndMarker(lat: number, lng: number, onDragEnd?: (lat: number, lng: number) => void): void {
+    this.directionsService?.setEndMarker(lat, lng, onDragEnd)
   }
 
   clearRouteMarkers(): void {

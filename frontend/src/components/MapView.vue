@@ -3,7 +3,9 @@
     <Map
       :locationPoints="locationPoints"
       :selectedLocation="selectedLocation"
+      :routeMode="isRouteMode"
       @locationSelected="setSelectedLocationPosition"
+      @routePointsSelected="handleRoutePoints"
     />
     <div class="map-overlay-items">
       <transition name="slide">
@@ -12,6 +14,11 @@
         </div>
       </transition>
       <button class="add-location blank" @click="openNewEdit()"></button>
+      <button
+        class="route-button blank"
+        :class="{ active: isRouteMode }"
+        @click="toggleRouteMode()"
+      ></button>
       <div class="edit-view-wrapper">
         <transition name="show">
           <LocationPointEditView
@@ -42,6 +49,7 @@ export default {
   data: () => ({
     locationPoints: [] as LocationPoint[],
     loading: true,
+    isRouteMode: false,
 
     selectedLocationPosition: {
       latitude: DEFAULT_POINT.LATITUDE,
@@ -98,6 +106,17 @@ export default {
         }
         return l
       })
+    },
+
+    toggleRouteMode(): void {
+      this.isRouteMode = !this.isRouteMode
+    },
+
+    handleRoutePoints(points: {
+      start: { latitude: number; longitude: number }
+      end: { latitude: number; longitude: number }
+    }): void {
+      console.log('Route points selected:', points)
     },
 
     setSelectedLocationPosition(val: { latitude: number; longitude: number }): void {
@@ -195,6 +214,47 @@ export default {
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
+      }
+
+      &:hover {
+        transform: translateY(-2px);
+      }
+    }
+
+    .route-button {
+      position: fixed;
+      bottom: 10vh;
+      bottom: 10dvh;
+      right: 20px;
+
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: var(--bg-dark);
+      box-shadow:
+        0 2px 3px 1px rgba(0, 0, 0, 0.5),
+        0 0 10px 0 rgba(0, 0, 0, 0.25);
+      transition: all 0.2s ease;
+      border: 2px solid var(--purple);
+
+      &:after {
+        content: '';
+        display: block;
+        width: 20px;
+        height: 20px;
+        background-image: url('/arrow-white.svg');
+        background-size: 20px;
+        background-position: center;
+        background-repeat: no-repeat;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+
+      &.active {
+        background-color: var(--purple);
+        border-color: var(--purple);
       }
 
       &:hover {

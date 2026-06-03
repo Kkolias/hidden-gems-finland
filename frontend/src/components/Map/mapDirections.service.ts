@@ -1,5 +1,5 @@
 import L from 'leaflet'
-import { markerIcon } from '../../constants/marker.const'
+import { startMarkerIcon, endMarkerIcon } from '../../constants/marker.const'
 import type { DirectionRouteResult } from '../../types/direction-route-result'
 import api from '../../utils/api'
 
@@ -31,20 +31,38 @@ export class MapDirections {
     this.map = map
   }
 
-  setStartMarker(lat: number, lng: number): void {
+  setStartMarker(lat: number, lng: number, onDragEnd?: (lat: number, lng: number) => void): void {
     this.clearStartMarker()
     this.startMarker = L.marker([lat, lng], {
-      icon: markerIcon,
+      icon: startMarkerIcon,
+      draggable: true,
     }).addTo(this.map)
-    this.startMarker.bindPopup('<b>Start point</b>').openPopup()
+    this.startMarker.bindPopup('<b>Start point</b>', { autoPan: false })
+
+    if (onDragEnd) {
+      this.startMarker.on('dragend', (e) => {
+        const marker = e.target as L.Marker
+        const pos = marker.getLatLng()
+        onDragEnd(pos.lat, pos.lng)
+      })
+    }
   }
 
-  setEndMarker(lat: number, lng: number): void {
+  setEndMarker(lat: number, lng: number, onDragEnd?: (lat: number, lng: number) => void): void {
     this.clearEndMarker()
     this.endMarker = L.marker([lat, lng], {
-      icon: markerIcon,
+      icon: endMarkerIcon,
+      draggable: true,
     }).addTo(this.map)
-    this.endMarker.bindPopup('<b>End point</b>').openPopup()
+    this.endMarker.bindPopup('<b>End point</b>', { autoPan: false })
+
+    if (onDragEnd) {
+      this.endMarker.on('dragend', (e) => {
+        const marker = e.target as L.Marker
+        const pos = marker.getLatLng()
+        onDragEnd(pos.lat, pos.lng)
+      })
+    }
   }
 
   clearStartMarker(): void {
@@ -116,7 +134,7 @@ export class MapDirections {
       weight: 5,
       opacity: 0.8,
     }).addTo(this.map)
-    this.map.fitBounds(this.routeLine.getBounds(), { padding: [40, 40] })
+    this.map.fitBounds(this.routeLine.getBounds(), { padding: [40, 40], animate: false })
   }
 
   getStartPosition(): { lat: number; lng: number } | null {

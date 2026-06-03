@@ -152,10 +152,10 @@ export default {
 
     async handleRouteMapClick(lat: number, lng: number): Promise<void> {
       if (this.routeStep === 'start') {
-        this.map?.setRouteStartMarker(lat, lng)
+        this.map?.setRouteStartMarker(lat, lng, () => this.refetchRoute())
         this.routeStep = 'end'
       } else if (this.routeStep === 'end') {
-        this.map?.setRouteEndMarker(lat, lng)
+        this.map?.setRouteEndMarker(lat, lng, () => this.refetchRoute())
         this.routeStep = 'complete'
         this.map?.removeMapClickListener()
 
@@ -168,6 +168,18 @@ export default {
             end: { latitude: endPos.lat, longitude: endPos.lng },
           })
         }
+      }
+    },
+
+    refetchRoute(): void {
+      const startPos = this.map?.getStartPosition()
+      const endPos = this.map?.getEndPosition()
+      if (startPos && endPos) {
+        this.map?.fetchRoute(startPos.lat, startPos.lng, endPos.lat, endPos.lng)
+        this.$emit('routePointsSelected', {
+          start: { latitude: startPos.lat, longitude: startPos.lng },
+          end: { latitude: endPos.lat, longitude: endPos.lng },
+        })
       }
     },
   },
