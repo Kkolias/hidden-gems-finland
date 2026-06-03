@@ -19,6 +19,18 @@
         :class="{ active: isRouteMode }"
         @click="toggleRouteMode()"
       ></button>
+      <transition name="slide">
+        <div class="radius-slider-container shadow" v-if="isRouteMode">
+          <span>Radius: {{ radius }}km</span>
+          <input
+            type="range"
+            min="1"
+            max="100"
+            v-model.number="radius"
+            @change="handleRadiusChange"
+          />
+        </div>
+      </transition>
       <div class="edit-view-wrapper">
         <transition name="show">
           <LocationPointEditView
@@ -50,6 +62,7 @@ export default {
     locationPoints: [] as LocationPoint[],
     loading: true,
     isRouteMode: false,
+    radius: 10,
 
     selectedLocationPosition: {
       latitude: DEFAULT_POINT.LATITUDE,
@@ -110,6 +123,15 @@ export default {
 
     toggleRouteMode(): void {
       this.isRouteMode = !this.isRouteMode
+      if (!this.isRouteMode) {
+        const query = { ...this.$route.query }
+        delete query.radius
+        this.$router.push({ query })
+      }
+    },
+
+    handleRadiusChange(): void {
+      this.$router.push({ query: { ...this.$route.query, radius: String(this.radius) } })
     },
 
     handleRoutePoints(points: {
@@ -259,6 +281,32 @@ export default {
 
       &:hover {
         transform: translateY(-2px);
+      }
+    }
+
+    .radius-slider-container {
+      position: fixed;
+      bottom: 12vh;
+      bottom: 12dvh;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--bg-dark);
+      padding: 10px 20px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+
+      span {
+        font-size: 14px;
+        white-space: nowrap;
+        color: var(--white);
+      }
+
+      input[type='range'] {
+        width: 140px;
+        accent-color: var(--purple);
+        cursor: pointer;
       }
     }
   }
