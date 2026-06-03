@@ -17,6 +17,7 @@
       <button class="add-location blank" @click="openNewEdit()"></button>
       <button
         class="route-button blank"
+        title="Search locations along the route"
         :class="{ active: isRouteMode }"
         @click="toggleRouteMode()"
       ></button>
@@ -253,8 +254,8 @@ export default {
       bottom: 4dvh;
       right: 20px;
 
-      width: 40px;
-      height: 40px;
+      width: 50px;
+      height: 50px;
       border-radius: 50%;
       background-color: var(--purple);
       box-shadow:
@@ -266,8 +267,8 @@ export default {
       &:after {
         content: '';
         display: block;
-        width: 22px;
-        height: 22px;
+        width: 26px;
+        height: 26px;
         background-image: url('/add-icon.svg');
         background-size: 22px;
         background-position: center;
@@ -284,27 +285,28 @@ export default {
 
     .route-button {
       position: fixed;
-      bottom: 10vh;
-      bottom: 10dvh;
+      bottom: 8vh;
+      bottom: 8dvh;
       right: 20px;
 
-      width: 40px;
-      height: 40px;
+      width: 50px;
+      height: 50px;
       border-radius: 50%;
       background-color: var(--bg-dark);
       box-shadow:
         0 2px 3px 1px rgba(0, 0, 0, 0.5),
         0 0 10px 0 rgba(0, 0, 0, 0.25);
       transition: all 0.2s ease;
-      border: 2px solid var(--purple);
+      transform: translateY(-100%);
+      // border: 2px solid var(--purple);
 
       &:after {
         content: '';
         display: block;
-        width: 20px;
-        height: 20px;
-        background-image: url('/arrow-white.svg');
-        background-size: 20px;
+        width: 50px;
+        height: 50px;
+        background-image: url('/select-route-unselected.svg');
+        background-size: 40px;
         background-position: center;
         background-repeat: no-repeat;
         position: absolute;
@@ -316,10 +318,14 @@ export default {
       &.active {
         background-color: var(--purple);
         border-color: var(--purple);
+
+        &:after {
+          background-image: url('/select-route-selected.svg');
+        }
       }
 
       &:hover {
-        transform: translateY(-2px);
+        transform: translateY(-102%);
       }
     }
 
@@ -329,7 +335,7 @@ export default {
       bottom: 20dvh;
       left: 50%;
       transform: translateX(-50%);
-      background: #c0392b;
+      background: var(--error);
       padding: 10px 20px;
       border-radius: 10px;
       max-width: 80vw;
@@ -343,8 +349,8 @@ export default {
 
     .radius-slider-container {
       position: fixed;
-      bottom: 12vh;
-      bottom: 12dvh;
+      bottom: 4vh;
+      bottom: 4dvh;
       left: 50%;
       transform: translateX(-50%);
       background: var(--bg-dark);
