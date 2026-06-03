@@ -1,11 +1,12 @@
 <template>
   <div class="component-MapView">
     <Map
-      :locationPoints="locationPoints"
+      :locationPoints="displayedLocationPoints"
       :selectedLocation="selectedLocation"
       :routeMode="isRouteMode"
       @locationSelected="setSelectedLocationPosition"
       @routePointsSelected="handleRoutePoints"
+      @routeError="handleRouteError"
     />
     <div class="map-overlay-items">
       <transition name="slide">
@@ -20,14 +21,20 @@
         @click="toggleRouteMode()"
       ></button>
       <transition name="slide">
+        <div class="route-error-toast shadow" v-if="routeError">
+          <span>{{ routeError }}</span>
+        </div>
+      </transition>
+      <transition name="slide">
         <div class="radius-slider-container shadow" v-if="isRouteMode">
-          <span>Radius: {{ radius }}km</span>
+          <span>Radius: {{ sliderRadius }}km</span>
           <input
             type="range"
             min="1"
             max="100"
-            v-model.number="radius"
-            @change="handleRadiusChange"
+            :value="sliderRadius"
+            @input="sliderRadius = Number(($event.target as HTMLInputElement).value)"
+            @change="commitRadius"
           />
         </div>
       </transition>
@@ -49,6 +56,7 @@
 <script lang="ts">
 import { DEFAULT_POINT } from '../constants/map.const'
 import type { LocationPoint } from '../types/location-points'
+import { pointToPolylineDistance } from '../utils/geo'
 import api from '../utils/api'
 import LocationPointEditView from './LocationPointEditView.vue'
 import Map from './Map/Map.vue'
@@ -62,7 +70,12 @@ export default {
     locationPoints: [] as LocationPoint[],
     loading: true,
     isRouteMode: false,
+    sliderRadius: 10,
     radius: 10,
+    routeError: null as string | null,
+    routeStart: null as { latitude: number; longitude: number } | null,
+    routeEnd: null as { latitude: number; longitude: number } | null,
+    routeGeometry: null as [number, number][] | null,
 
     selectedLocationPosition: {
       latitude: DEFAULT_POINT.LATITUDE,
@@ -70,6 +83,16 @@ export default {
     },
   }),
   computed: {
+    displayedLocationPoints(): LocationPoint[] {
+      if (!this.isRouteMode) return this.locationPoints
+      if (!this.routeGeometry) return []
+      return this.locationPoints.filter((p) => {
+        const dist = pointToPolylineDistance(p.latitude, p.longitude, this.routeGeometry!)
+        // console.log(dist)
+        return dist <= this.radius
+      })
+    },
+
     queryParams() {
       return this.$route?.query
     },
@@ -124,21 +147,37 @@ export default {
     toggleRouteMode(): void {
       this.isRouteMode = !this.isRouteMode
       if (!this.isRouteMode) {
+        this.sliderRadius = 10
+        this.radius = 10
+        this.routeStart = null
+        this.routeEnd = null
+        this.routeGeometry = null
         const query = { ...this.$route.query }
         delete query.radius
         this.$router.push({ query })
       }
     },
 
-    handleRadiusChange(): void {
+    commitRadius(): void {
+      this.radius = this.sliderRadius
       this.$router.push({ query: { ...this.$route.query, radius: String(this.radius) } })
+    },
+
+    handleRouteError(message: string): void {
+      this.routeError = message
+      setTimeout(() => {
+        this.routeError = null
+      }, 5000)
     },
 
     handleRoutePoints(points: {
       start: { latitude: number; longitude: number }
       end: { latitude: number; longitude: number }
+      geometry?: [number, number][] | null
     }): void {
-      console.log('Route points selected:', points)
+      this.routeStart = points.start
+      this.routeEnd = points.end
+      this.routeGeometry = points.geometry || null
     },
 
     setSelectedLocationPosition(val: { latitude: number; longitude: number }): void {
@@ -281,6 +320,24 @@ export default {
 
       &:hover {
         transform: translateY(-2px);
+      }
+    }
+
+    .route-error-toast {
+      position: fixed;
+      bottom: 20vh;
+      bottom: 20dvh;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #c0392b;
+      padding: 10px 20px;
+      border-radius: 10px;
+      max-width: 80vw;
+
+      span {
+        font-size: 14px;
+        color: var(--white);
+        text-align: center;
       }
     }
 

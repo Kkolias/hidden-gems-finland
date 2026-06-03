@@ -25,7 +25,7 @@ export default {
       default: false,
     },
   },
-  emits: ['locationSelected', 'routePointsSelected'],
+  emits: ['locationSelected', 'routePointsSelected', 'routeError'],
   data: () => ({
     map: null as MapService | null,
     mounted: false,
@@ -53,7 +53,8 @@ export default {
         if (!this.mounted) {
           this.setLocationsAfterMount = true
         }
-        if (!this.isSelectLocationMode && !this.routeMode) {
+        if (!this.isSelectLocationMode) {
+        // if (!this.isSelectLocationMode && !this.routeMode) {
           this.setLocationPoints()
         }
       },
@@ -162,23 +163,37 @@ export default {
         const startPos = this.map?.getStartPosition()
         const endPos = this.map?.getEndPosition()
         if (startPos && endPos) {
-          this.map?.fetchRoute(startPos.lat, startPos.lng, endPos.lat, endPos.lng)
+          try {
+            await this.map?.fetchRoute(startPos.lat, startPos.lng, endPos.lat, endPos.lng)
+          } catch (e) {
+            this.$emit('routeError', (e as Error).message)
+            return
+          }
+          const geometry = this.map?.getRouteCoordinates()
           this.$emit('routePointsSelected', {
             start: { latitude: startPos.lat, longitude: startPos.lng },
             end: { latitude: endPos.lat, longitude: endPos.lng },
+            geometry,
           })
         }
       }
     },
 
-    refetchRoute(): void {
+    async refetchRoute(): Promise<void> {
       const startPos = this.map?.getStartPosition()
       const endPos = this.map?.getEndPosition()
       if (startPos && endPos) {
-        this.map?.fetchRoute(startPos.lat, startPos.lng, endPos.lat, endPos.lng)
+        try {
+          await this.map?.fetchRoute(startPos.lat, startPos.lng, endPos.lat, endPos.lng)
+        } catch (e) {
+          this.$emit('routeError', (e as Error).message)
+          return
+        }
+        const geometry = this.map?.getRouteCoordinates()
         this.$emit('routePointsSelected', {
           start: { latitude: startPos.lat, longitude: startPos.lng },
           end: { latitude: endPos.lat, longitude: endPos.lng },
+          geometry,
         })
       }
     },

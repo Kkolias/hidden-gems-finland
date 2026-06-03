@@ -158,6 +158,10 @@ export class MapService {
     return this.directionsService?.fetchRoute(startLat, startLng, endLat, endLng)
   }
 
+  getRouteCoordinates(): [number, number][] | null {
+    return this.directionsService?.routeCoordinates || null
+  }
+
   getStartPosition(): { lat: number; lng: number } | null {
     return this.directionsService?.getStartPosition() || null
   }

@@ -26,6 +26,7 @@ export class MapDirections {
   routeLine: L.Polyline | null = null
   routeDistance: number | null = null
   routeDuration: number | null = null
+  routeCoordinates: [number, number][] | null = null
 
   constructor(map: L.Map) {
     this.map = map
@@ -83,6 +84,7 @@ export class MapDirections {
     this.clearStartMarker()
     this.clearEndMarker()
     this.clearRouteLine()
+    this.routeCoordinates = null
     this.routeDistance = null
     this.routeDuration = null
   }
@@ -120,13 +122,18 @@ export class MapDirections {
       endLng,
     })
 
+    if (data?.error) {
+      throw new Error(data.error)
+    }
+
     const geometry = data?.geometry
     if (!data || !geometry) {
-      throw new Error('No route found in directions response')
+      throw new Error('No route found between the points. Try moving points closer to roads.')
     }
 
     const coords = geometry.coordinates.map((c) => [c[1], c[0]] as [number, number])
 
+    this.routeCoordinates = coords
     this.routeDistance = data.distance
     this.routeDuration = data.duration
     this.routeLine = L.polyline(coords, {
