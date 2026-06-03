@@ -5,6 +5,7 @@ import locationPointService from "./location-point.service";
 import { Router, Request } from "express";
 import { validateBody } from "../utils/validateBody";
 import { CreateLocationDto, UpdateLocationDto } from "./dto/location-point.dto";
+import { getRouteBetweenPoints } from "./utils/getRouteBetweenPoints";
 
 const LOCATION_POINT_PREFIX = "/location-points";
 
@@ -14,6 +15,7 @@ const LOCATION_POINT_PATHS = {
   UPDATE: `${LOCATION_POINT_PREFIX}/update`,
   CHECK_LOCATIONS: `${LOCATION_POINT_PREFIX}/check-locations`,
   TEST: `${LOCATION_POINT_PREFIX}/test`,
+  GET_ROUTE: `${LOCATION_POINT_PREFIX}/get-route`,
 };
 
 const MINUTE_IN_MS = 60 * 1000;
@@ -126,6 +128,21 @@ router.get(
       timestamp: new Date().toISOString(),
     });
   }, true /* useAuth */),
+);
+
+router.get(
+  LOCATION_POINT_PATHS.GET_ROUTE,
+  tryCatchWrapper(async (req, res) => {
+    const coordinates = {
+      startLat: parseFloat(req.query.startLat as string),
+      startLng: parseFloat(req.query.startLng as string),
+      endLat: parseFloat(req.query.endLat as string),
+      endLng: parseFloat(req.query.endLng as string),
+    };
+
+    const locationPoints = await getRouteBetweenPoints(coordinates);
+    res.json(locationPoints);
+  }),
 );
 
 export default router;

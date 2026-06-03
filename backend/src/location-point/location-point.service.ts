@@ -5,6 +5,10 @@ import {
   NewLocationPoint,
 } from "../types/db";
 import { checkPointNameAndDescription } from "./utils/checkPointNameAndDescription";
+import {
+  DirectionRouteResult,
+  getRouteBetweenPoints,
+} from "./utils/getRouteBetweenPoints";
 
 export class LocationPointService {
   readonly repositoryService = repositoryService;
