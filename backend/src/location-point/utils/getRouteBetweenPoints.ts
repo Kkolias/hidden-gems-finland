@@ -25,12 +25,15 @@ interface RouteResponse {
 }
 
 export interface DirectionRouteResult {
-  distance: number;
-  duration: number;
-  geometry: {
-    type: "LineString";
-    coordinates: [number, number][];
-  };
+  data: {
+    distance: number;
+    duration: number;
+    geometry: {
+      type: "LineString";
+      coordinates: [number, number][];
+    };
+  } | null;
+  error?: string;
 }
 
 export async function getRouteBetweenPoints(
@@ -52,20 +55,27 @@ export async function getRouteBetweenPoints(
   });
 
   if (!response.ok) {
-    throw new Error(
-      `Directions API request failed with status ${response.status}`,
-    );
+    return {
+      data: null,
+      error: "Error getting route. Try again later.",
+    };
   }
 
   const data: RouteResponse = await response.json();
   const route = data.features?.[0];
   if (!route) {
-    throw new Error("No route found in directions response");
+    return {
+      data: null,
+      error:
+        "No route found between the points. Try moving points closer to roads.",
+    };
   }
 
   return {
-    distance: route.properties.summary.distance,
-    duration: route.properties.summary.duration,
-    geometry: route.geometry,
+    data: {
+      distance: route.properties.summary.distance,
+      duration: route.properties.summary.duration,
+      geometry: route.geometry,
+    },
   };
 }
