@@ -8,7 +8,10 @@ const corsOptions = {
   origin: [
     "http://localhost:5173",
     "https://frontend-hidden-gems-9741.fly.dev",
-    "https://hidden-gems-finland.fi"
+    "https://hidden-gems-finland.fi",
+    "https://www.hidden-gems-finland.fi",
+    "http://www.hidden-gems-finland.fi",
+    "http://hidden-gems-finland.fi"
   ], // Replace with your frontend URL
   optionsSuccessStatus: 200,
 };
