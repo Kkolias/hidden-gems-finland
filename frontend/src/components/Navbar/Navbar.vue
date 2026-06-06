@@ -9,13 +9,16 @@
 import NavbarDesktop from './NavbarDesktop.vue'
 export default {
   components: {
-    NavbarDesktop
+    NavbarDesktop,
   },
 }
 </script>
 
 <style lang="less" scoped>
 .component-Navbar {
+  position: relative;
+  z-index: 100000;
+
   .nav-desktop {
     display: none;
   }

@@ -50,6 +50,11 @@
           />
         </transition>
       </div>
+      <div class="activelocation-point-list-view-wrapper">
+          <LocationPointListViewWrapper
+            :locationPoints="displayedLocationPoints"
+          />
+      </div>
     </div>
   </div>
 </template>
@@ -60,12 +65,14 @@ import type { LocationPoint } from '../types/location-points'
 import { pointToPolylineDistance } from '../utils/geo'
 import api from '../utils/api'
 import LocationPointEditView from './LocationPointEditView.vue'
+import LocationPointListViewWrapper from './LocationPointListViewWrapper.vue'
 import Map from './Map/Map.vue'
 
 export default {
   components: {
     Map,
     LocationPointEditView,
+    LocationPointListViewWrapper,
   },
   data: () => ({
     locationPoints: [] as LocationPoint[],
