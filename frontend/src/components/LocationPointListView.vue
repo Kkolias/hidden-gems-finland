@@ -32,6 +32,10 @@ export default {
   height: calc(100% - 60px);
   background: var(--bg-dark);
 
+  &.mobile {
+    height: 100%;
+  }
+
   .scroller-list {
     list-style: none;
     padding: 0;

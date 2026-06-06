@@ -229,6 +229,7 @@ export default {
   align-items: center;
   transition: height 0.3s ease-in;
   overflow: auto;
+  z-index: 10;
 
   &.small {
     height: 15vh;

@@ -10,7 +10,7 @@
         <span class="arrow"></span>
       </button>
     </div>
-    <LocationPointListView v-if="listOpen" :locationPoints="locationPoints" />
+    <LocationPointListView v-if="listOpen" class="mobile" :locationPoints="locationPoints" />
   </div>
 </template>
 
