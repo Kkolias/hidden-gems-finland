@@ -19,7 +19,6 @@ declare module 'vue' {
     LocationPointListViewDesktopWrapper: typeof import('./src/components/LocationPointListViewDesktopWrapper.vue')['default']
     LocationPointListViewMobileWrapper: typeof import('./src/components/LocationPointListViewMobileWrapper.vue')['default']
     LocationPointListViewWrapper: typeof import('./src/components/LocationPointListViewWrapper.vue')['default']
-    LocationPointLisView: typeof import('./src/components/LocationPointLisView.vue')['default']
     Map: typeof import('./src/components/Map/Map.vue')['default']
     MapView: typeof import('./src/components/MapView.vue')['default']
     Navbar: typeof import('./src/components/Navbar/Navbar.vue')['default']
