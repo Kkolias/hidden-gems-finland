@@ -71,16 +71,20 @@ export default {
     transform: translateX(-100%);
   }
 
+  &.open .toggle-sidebar-section {
+    left: calc(100% + 8px);
+  }
+
   .toggle-sidebar-section {
     position: absolute;
     top: 8px;
-    right: -8px;
+    left: 8px;
     width: 40px;
     height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
-    transform: translateX(100%);
+    transition: left 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 
     .toggle-sidebar-btn {
       width: 40px;
