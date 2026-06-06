@@ -55,6 +55,8 @@ export default {
   max-width: 80vw;
   width: 100%;
   height: 40px;
+  overflow: hidden;
+  transition: height 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 
   &.open {
     height: 80vh;
@@ -94,5 +96,6 @@ export default {
       }
     }
   }
+
 }
 </style>
