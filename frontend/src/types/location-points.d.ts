@@ -7,6 +7,7 @@ export interface LocationPoint {
   longitude: number
   category: string | null
   image_url: string | null
+  upvotes: number
   created_at: Date
   updated_at: Date
 }

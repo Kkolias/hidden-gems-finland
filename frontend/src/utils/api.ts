@@ -53,6 +53,14 @@ export class ApiUtil {
   }): Promise<DirectionRouteResult> {
     return await this.get(LOCATION_POINT_PATHS.GET_ROUTE, coordinates)
   }
+
+  async upvoteLocationPoint(id: number): Promise<LocationPoint> {
+    return await this.post(LOCATION_POINT_PATHS.UPVOTE_POINT, { payload: { id } })
+  }
+
+  async removeUpvoteLocationPoint(id: number): Promise<LocationPoint> {
+    return await this.post(LOCATION_POINT_PATHS.REMOVE_UPVOTE_POINT, { payload: { id } })
+  }
 }
 
 export default new ApiUtil()
