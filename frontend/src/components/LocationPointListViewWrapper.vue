@@ -3,10 +3,14 @@
     <LocationPointListViewDesktopWrapper
       class="list-wrapper desktop"
       :locationPoints="locationPoints"
+      :upvotedPoints="upvotedPoints"
+      @locationPointUpdated="locationPointUpdated"
     />
     <LocationPointListViewMobileWrapper
       class="list-wrapper mobile"
       :locationPoints="locationPoints"
+      :upvotedPoints="upvotedPoints"
+      @locationPointUpdated="locationPointUpdated"
     />
   </div>
 </template>
@@ -25,6 +29,15 @@ export default {
     locationPoints: {
       type: Array as () => LocationPoint[],
       default: () => [],
+    },
+    upvotedPoints: {
+      type: Array as () => number[],
+      default: () => [],
+    },
+  },
+  methods: {
+    locationPointUpdated(location: LocationPoint): void {
+      this.$emit('locationPointUpdated', location)
     },
   },
 }

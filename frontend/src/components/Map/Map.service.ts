@@ -41,12 +41,21 @@ export class MapService {
     })
   }
 
-  setLocationPoints(
-    locationPoints: LocationPoint[],
-    onMarkerClick?: (point: LocationPoint) => void,
-    onEditClick?: (point: LocationPoint) => void,
-    onPopupClose?: () => void,
-  ): void {
+  setLocationPoints({
+    locationPoints,
+    upvotedPoints,
+    onMarkerClick,
+    onEditClick,
+    onPopupClose,
+    onUpvoteClick,
+  }: {
+    locationPoints: LocationPoint[]
+    upvotedPoints: number[]
+    onMarkerClick?: (point: LocationPoint) => void
+    onEditClick?: (point: LocationPoint) => void
+    onPopupClose?: () => void
+    onUpvoteClick?: (point: LocationPoint) => void
+  }): void {
     if (!this.markersClusterGroup) {
       return
     }
@@ -58,7 +67,7 @@ export class MapService {
     locationPoints.forEach((point) => {
       const marker = L.marker([point.latitude, point.longitude], {
         icon: markerIcon,
-      }).bindPopup(customInfoWindow(point), customInfoWindowOptions)
+      }).bindPopup(customInfoWindow(point, upvotedPoints), customInfoWindowOptions)
 
       this.markersMap.set(point.id, marker)
 
@@ -74,17 +83,24 @@ export class MapService {
         })
       }
 
-      if (onEditClick) {
+      if (onEditClick && onUpvoteClick) {
         marker.on('popupopen', () => {
           const popup = marker.getPopup()
           if (popup) {
             const content = popup.getElement()
             if (content) {
-              const btn = content.querySelector('#edit-location-btn') as HTMLButtonElement
-              if (btn) {
-                btn.onclick = (e) => {
+              const editBtn = content.querySelector('#edit-location-btn') as HTMLButtonElement
+              if (editBtn) {
+                editBtn.onclick = (e) => {
                   e.stopPropagation()
                   onEditClick(point)
+                }
+              }
+              const upvoteBtn = content.querySelector('#upvote-btn') as HTMLButtonElement
+              if (upvoteBtn) {
+                upvoteBtn.onclick = (e) => {
+                  e.stopPropagation()
+                  onUpvoteClick(point)
                 }
               }
             }
@@ -165,11 +181,19 @@ export class MapService {
     this.markersClusterGroup?.clearLayers()
   }
 
-  setRouteStartMarker(lat: number, lng: number, onDragEnd?: (lat: number, lng: number) => void): void {
+  setRouteStartMarker(
+    lat: number,
+    lng: number,
+    onDragEnd?: (lat: number, lng: number) => void,
+  ): void {
     this.directionsService?.setStartMarker(lat, lng, onDragEnd)
   }
 
-  setRouteEndMarker(lat: number, lng: number, onDragEnd?: (lat: number, lng: number) => void): void {
+  setRouteEndMarker(
+    lat: number,
+    lng: number,
+    onDragEnd?: (lat: number, lng: number) => void,
+  ): void {
     this.directionsService?.setEndMarker(lat, lng, onDragEnd)
   }
 
@@ -177,12 +201,7 @@ export class MapService {
     this.directionsService?.clearRoute()
   }
 
-  drawRouteLine(
-    startLat: number,
-    startLng: number,
-    endLat: number,
-    endLng: number,
-  ): void {
+  drawRouteLine(startLat: number, startLng: number, endLat: number, endLng: number): void {
     this.directionsService?.drawRouteLine(startLat, startLng, endLat, endLng)
   }
 
@@ -206,7 +225,12 @@ export class MapService {
     }
   }
 
-  async fetchRoute(startLat: number, startLng: number, endLat: number, endLng: number): Promise<void> {
+  async fetchRoute(
+    startLat: number,
+    startLng: number,
+    endLat: number,
+    endLng: number,
+  ): Promise<void> {
     return this.directionsService?.fetchRoute(startLat, startLng, endLat, endLng)
   }
 

@@ -10,7 +10,12 @@
         <span class="arrow"></span>
       </button>
     </div>
-    <LocationPointListView v-if="listOpen" class="mobile" :locationPoints="locationPoints" />
+    <LocationPointListView
+      v-if="listOpen"
+      class="mobile"
+      :locationPoints="locationPoints"
+      :upvotedPoints="upvotedPoints"
+    />
   </div>
 </template>
 
@@ -25,6 +30,10 @@ export default {
   props: {
     locationPoints: {
       type: Array as () => LocationPoint[],
+      default: () => [],
+    },
+    upvotedPoints: {
+      type: Array as () => number[],
       default: () => [],
     },
   },
@@ -58,6 +67,10 @@ export default {
         list: 'open',
       }
       this.$router.push({ query: newQuery })
+    },
+
+    locationPointUpdated(location: LocationPoint): void {
+      this.$emit('locationPointUpdated', location)
     },
   },
 }

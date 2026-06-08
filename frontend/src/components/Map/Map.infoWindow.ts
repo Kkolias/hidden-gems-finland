@@ -1,10 +1,28 @@
 import type { LocationPoint } from '../../types/location-points'
 
-export const customInfoWindow = (content: LocationPoint): string => {
+export const customInfoWindow = (content: LocationPoint, upvotedPoints: number[]): string => {
   const noHeader = !content?.name || content?.name === 'Unnamed Location'
   const headerName = noHeader ? content?.description || '' : content.name
+  const upvotes = content?.upvotes || 0
 
-  let headerSection = `<h3 class="big">${headerName}</h3>`
+  const isUpvoted = upvotedPoints?.includes(content?.id)
+  let upvoteClass = 'upvote-btn blank no-shadow'
+  if (isUpvoted) {
+    upvoteClass += ' upvoted'
+  }
+
+  // let headerSection = `<h3 class="big">${headerName}</h3>`
+  let headerSection = `
+  <div class="title-wrapper">
+    <h3 class="location-name">${headerName}</h3>
+    <div class="upvote-container">
+      <span>${upvotes}</span>
+      <button
+      class="${upvoteClass}"
+      id="upvote-btn"
+      ></button>
+    </div>
+  </div>`
 
   let citySection = ''
   if (content?.city) {

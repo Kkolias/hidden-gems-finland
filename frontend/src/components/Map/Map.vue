@@ -24,8 +24,12 @@ export default {
       type: Boolean,
       default: false,
     },
+    upvotedPoints: {
+      type: Array as () => number[],
+      default: () => [],
+    },
   },
-  emits: ['locationSelected', 'routePointsSelected', 'routeError', 'viewChanged'],
+  emits: ['locationSelected', 'routePointsSelected', 'routeError', 'viewChanged', 'handleUpvoteClick'],
   data: () => ({
     map: null as MapService | null,
     mounted: false,
@@ -115,12 +119,17 @@ export default {
       }
     },
     setLocationPoints(): void {
-      this.map?.setLocationPoints(
-        this.locationPoints,
-        (point) => this.handleMarkerClick(point),
-        (point) => this.handleEditLocation(point),
-        () => this.handlePopupClose(),
-      )
+      this.map?.setLocationPoints({
+        locationPoints: this.locationPoints,
+        upvotedPoints: this.upvotedPoints,
+        onMarkerClick: (point) => this.handleMarkerClick(point),
+        onEditClick: (point) => this.handleEditLocation(point),
+        onPopupClose: () => this.handlePopupClose(),
+        onUpvoteClick: (point) => this.handleUpvoteClick(point),
+      })
+    },
+    handleUpvoteClick(point: LocationPoint): void {
+      this.$emit('handleUpvoteClick', point)
     },
     handlePopupClose() {
       if (this.skipPopupCloseHandler || this.isEditOpen) {
@@ -159,7 +168,7 @@ export default {
       }
 
       this.map.clearSelectableMarker()
-      this.map.setLocationPoints([])
+      this.map.setLocationPoints({ locationPoints: [], upvotedPoints: [] })
       this.map.setSelectableMarker(latitude, longitude, (lat, lng) => {
         this.$emit('locationSelected', { latitude: lat, longitude: lng })
       })

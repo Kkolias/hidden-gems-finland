@@ -2,12 +2,14 @@
   <div class="component-MapView">
     <Map
       :locationPoints="displayedLocationPoints"
+      :upvotedPoints="upvotedPoints"
       :selectedLocation="selectedLocation"
       :routeMode="isRouteMode"
       @locationSelected="setSelectedLocationPosition"
       @routePointsSelected="handleRoutePoints"
       @routeError="handleRouteError"
       @viewChanged="handleViewChanged"
+      @handleUpvoteClick="handleUpvoteLocation"
     />
     <div class="map-overlay-items">
       <transition name="slide">
@@ -52,7 +54,11 @@
         </transition>
       </div>
       <div class="activelocation-point-list-view-wrapper">
-        <LocationPointListViewWrapper :locationPoints="sortedLocationPoints" />
+        <LocationPointListViewWrapper
+          :locationPoints="sortedLocationPoints"
+          :upvotedPoints="upvotedPoints"
+          @locationPointUpdated="handleLocationPointUpdated"
+        />
       </div>
     </div>
   </div>
@@ -75,6 +81,7 @@ export default {
   },
   data: () => ({
     locationPoints: [] as LocationPoint[],
+    upvotedPoints: [] as number[],
     loading: true,
     isRouteMode: false,
     sliderRadius: 10,
@@ -126,6 +133,7 @@ export default {
   },
   mounted() {
     this.fetchLocationPoints()
+    this.getUpvotedPointsFromStorage()
   },
   watch: {
     selectedLocation() {
@@ -136,6 +144,46 @@ export default {
     },
   },
   methods: {
+    getUpvotedPointsFromStorage(): void {
+      const stored = localStorage.getItem('upvotedPoints')
+      if (stored) {
+        try {
+          this.upvotedPoints = JSON.parse(stored)
+        } catch (e) {
+          console.error('Failed to parse upvoted points from storage', e)
+        }
+      }
+    },
+    handleLocationPointUpdated(location: LocationPoint): void {
+      this.getUpvotedPointsFromStorage()
+      this.locationPoints = this.locationPoints.map((l) => {
+        if (l?.id === location?.id) {
+          return location
+        }
+        return l
+      })
+    },
+    isUpvoted(locationPointId: number): boolean {
+      return this.upvotedPoints.includes(locationPointId)
+    },
+    async handleUpvoteLocation(point: LocationPoint): Promise<void> {
+      const locationPointId = point?.id
+      if (this.isUpvoted(locationPointId)) {
+        const updated = await api.removeUpvoteLocationPoint(locationPointId)
+        localStorage.setItem(
+          'upvotedPoints',
+          JSON.stringify(this.upvotedPoints.filter((id) => id !== locationPointId)),
+        )
+        this.handleLocationPointUpdated(updated)
+      } else {
+        const updated = await api.upvoteLocationPoint(locationPointId)
+        localStorage.setItem(
+          'upvotedPoints',
+          JSON.stringify([...this.upvotedPoints, locationPointId]),
+        )
+        this.handleLocationPointUpdated(updated)
+      }
+    },
     async fetchLocationPoints(): Promise<void> {
       this.setLoading(true)
       const r = await api.getLocations()

@@ -2,7 +2,12 @@
   <div class="component-LocationPointListViewDesktopWrapper" :class="{ open: listOpen }">
     <div class="list-slide-wrapper">
       <Transition name="slide">
-        <LocationPointListView v-if="listOpen" :locationPoints="locationPoints" />
+        <LocationPointListView
+          v-if="listOpen"
+          :locationPoints="locationPoints"
+          :upvotedPoints="upvotedPoints"
+          @locationPointUpdated="locationPointUpdated"
+        />
       </Transition>
     </div>
     <div class="toggle-sidebar-section">
@@ -26,6 +31,10 @@ export default {
   props: {
     locationPoints: {
       type: Array as () => LocationPoint[],
+      default: () => [],
+    },
+    upvotedPoints: {
+      type: Array as () => number[],
       default: () => [],
     },
   },
@@ -55,6 +64,10 @@ export default {
         list: 'open',
       }
       this.$router.push({ query: newQuery })
+    },
+
+    locationPointUpdated(location: LocationPoint): void {
+      this.$emit('locationPointUpdated', location)
     },
   },
 }
