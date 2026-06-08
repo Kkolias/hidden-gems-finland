@@ -7,6 +7,7 @@
       @locationSelected="setSelectedLocationPosition"
       @routePointsSelected="handleRoutePoints"
       @routeError="handleRouteError"
+      @viewChanged="handleViewChanged"
     />
     <div class="map-overlay-items">
       <transition name="slide">
@@ -51,9 +52,7 @@
         </transition>
       </div>
       <div class="activelocation-point-list-view-wrapper">
-          <LocationPointListViewWrapper
-            :locationPoints="displayedLocationPoints"
-          />
+        <LocationPointListViewWrapper :locationPoints="sortedLocationPoints" />
       </div>
     </div>
   </div>
@@ -62,7 +61,7 @@
 <script lang="ts">
 import { DEFAULT_POINT } from '../constants/map.const'
 import type { LocationPoint } from '../types/location-points'
-import { pointToPolylineDistance } from '../utils/geo'
+import { pointToPolylineDistance, sortByProximity } from '../utils/geo'
 import api from '../utils/api'
 import LocationPointEditView from './LocationPointEditView.vue'
 import LocationPointListViewWrapper from './LocationPointListViewWrapper.vue'
@@ -89,16 +88,22 @@ export default {
       latitude: DEFAULT_POINT.LATITUDE,
       longitude: DEFAULT_POINT.LONGITUDE,
     },
+    viewCenter: null as { lat: number; lng: number } | null,
   }),
   computed: {
     displayedLocationPoints(): LocationPoint[] {
       if (!this.isRouteMode) return this.locationPoints
+
       if (!this.routeGeometry) return []
       return this.locationPoints.filter((p) => {
         const dist = pointToPolylineDistance(p.latitude, p.longitude, this.routeGeometry!)
         // console.log(dist)
         return dist <= this.radius
       })
+    },
+    sortedLocationPoints(): LocationPoint[] {
+      if (!this.viewCenter) return this.displayedLocationPoints
+      return sortByProximity(this.displayedLocationPoints, this.viewCenter)
     },
 
     queryParams() {
@@ -186,6 +191,10 @@ export default {
       this.routeStart = points.start
       this.routeEnd = points.end
       this.routeGeometry = points.geometry || null
+    },
+
+    handleViewChanged(center: { lat: number; lng: number }): void {
+      this.viewCenter = center
     },
 
     setSelectedLocationPosition(val: { latitude: number; longitude: number }): void {

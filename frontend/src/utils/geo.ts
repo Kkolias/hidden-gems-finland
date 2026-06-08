@@ -1,3 +1,36 @@
+import type { LocationPoint } from '../types/location-points'
+
+const GRID_LAT = 0.009
+const GRID_LNG = 0.018
+
+function snapToGrid(value: number, gridSize: number): number {
+  return Math.round(value / gridSize) * gridSize
+}
+
+export function sortByProximity(
+  points: LocationPoint[],
+  center: { lat: number; lng: number },
+): LocationPoint[] {
+  const snappedCenterLat = snapToGrid(center.lat, GRID_LAT)
+  const snappedCenterLng = snapToGrid(center.lng, GRID_LNG)
+
+  return [...points].sort((a, b) => {
+    const dA = haversineDistance(
+      snapToGrid(a.latitude, GRID_LAT),
+      snapToGrid(a.longitude, GRID_LNG),
+      snappedCenterLat,
+      snappedCenterLng,
+    )
+    const dB = haversineDistance(
+      snapToGrid(b.latitude, GRID_LAT),
+      snapToGrid(b.longitude, GRID_LNG),
+      snappedCenterLat,
+      snappedCenterLng,
+    )
+    return dA - dB
+  })
+}
+
 function toRadians(deg: number): number {
   return (deg * Math.PI) / 180
 }

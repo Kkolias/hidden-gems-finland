@@ -25,7 +25,7 @@ export default {
       default: false,
     },
   },
-  emits: ['locationSelected', 'routePointsSelected', 'routeError'],
+  emits: ['locationSelected', 'routePointsSelected', 'routeError', 'viewChanged'],
   data: () => ({
     map: null as MapService | null,
     mounted: false,
@@ -103,6 +103,9 @@ export default {
       }
       const map = new MapService()
       map.initMap()
+      map.setViewChangeCallback((center: { lat: number; lng: number }) => {
+        this.$emit('viewChanged', center)
+      })
       this.map = map as any
 
       this.setMounted(true)

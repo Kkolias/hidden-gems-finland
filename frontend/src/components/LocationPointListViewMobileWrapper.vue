@@ -39,7 +39,24 @@ export default {
   },
   methods: {
     toggleSidebar(): void {
-      const newQuery = this.listOpen ? {} : { list: 'open' }
+      if (this.listOpen) {
+        this.closeSidebar()
+        return
+      }
+      this.openSidebar()
+    },
+    closeSidebar(): void {
+      const newQuery = {
+        ...this.$route?.query,
+      }
+      delete newQuery.list
+      this.$router.push({ query: newQuery })
+    },
+    openSidebar(): void {
+      const newQuery = {
+        ...this.$route?.query,
+        list: 'open',
+      }
       this.$router.push({ query: newQuery })
     },
   },
@@ -96,6 +113,5 @@ export default {
       }
     }
   }
-
 }
 </style>

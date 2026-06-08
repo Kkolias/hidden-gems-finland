@@ -1,7 +1,7 @@
 <template>
   <div class="component-LocationPointListView">
     <ul class="scroller-list">
-      <li class="location-point" v-for="locationPoint in locationPoints" :key="locationPoint.id">
+      <li class="location-point" :class="{ 'selected': isSelected(locationPoint) }" v-for="locationPoint in locationPoints" :key="locationPoint.id">
         <router-link :to="`?location=${locationPoint.id}&list=open`" class="overlay-link">
           <div class="top-box">
             <h3 class="location-name">{{ locationPoint.name }}</h3>
@@ -25,7 +25,12 @@ export default {
       default: () => [],
     },
   },
-  methods: {},
+  methods: {
+    isSelected(locationPoint: LocationPoint): boolean {
+      const queryParams = this.$route?.query
+      return queryParams?.location === String(locationPoint.id)
+    },
+  },
 }
 </script>
 
@@ -90,6 +95,10 @@ export default {
       &:last-child {
         border-bottom: none;
         padding-bottom: 80px;
+      }
+
+      &.selected {
+        background: var(--white-10);
       }
 
       &:hover {

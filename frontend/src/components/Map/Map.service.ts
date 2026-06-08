@@ -14,6 +14,7 @@ export class MapService {
   directionsService: MapDirections | null = null
   routeClickHandler: ((e: L.LeafletMouseEvent) => void) | null = null
   markersMap: Map<number, L.Marker> = new Map()
+  viewChangeCallback: ((center: { lat: number; lng: number }) => void) | null = null
 
   initMap() {
     this.map = L.map('map', { zoomAnimation: true, zoomControl: false }).setView(
@@ -31,6 +32,13 @@ export class MapService {
     this.map.addLayer(this.markersClusterGroup)
 
     this.directionsService = new MapDirections(this.map)
+
+    this.map.on('moveend', () => {
+      if (this.viewChangeCallback && this.map) {
+        const center = this.map.getCenter()
+        this.viewChangeCallback({ lat: center.lat, lng: center.lng })
+      }
+    })
   }
 
   setLocationPoints(
@@ -185,6 +193,10 @@ export class MapService {
       handler(e.latlng.lat, e.latlng.lng)
     }
     this.map.on('click', this.routeClickHandler)
+  }
+
+  setViewChangeCallback(cb: (center: { lat: number; lng: number }) => void): void {
+    this.viewChangeCallback = cb
   }
 
   removeMapClickListener(): void {
