@@ -27,6 +27,7 @@ async function convertOldMarkersToLocationPoints() {
     latitude: marker.geometry.coordinates[1],
     longitude: marker.geometry.coordinates[0],
     image_url: marker.properties?.gx_media_links || null,
+    upvotes: 0
   }));
 
   await db.insertInto("location_points").values(locationPoints).execute();
