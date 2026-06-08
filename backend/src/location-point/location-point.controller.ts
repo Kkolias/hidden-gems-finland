@@ -49,6 +49,19 @@ const updateLimiter = rateLimit({
   },
 });
 
+const upvoteLimiter = rateLimit({
+  windowMs: 10 * MINUTE_IN_MS,
+  limit: 10,
+  message: { error: "Too many vote requests for this location, please try again later" },
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: (req) => {
+    const ip = ipKeyGenerator(req.ip || "");
+    const locationId = req.body?.id;
+    return `${ip}:${locationId ?? "unknown"}`;
+  },
+});
+
 const router = Router();
 
 function tryCatchWrapper(
@@ -153,6 +166,7 @@ router.get(
 
 router.post(
   LOCATION_POINT_PATHS.UPVOTE_POINT,
+  upvoteLimiter,
   tryCatchWrapper(async (req: Request, res) => {
     const body = req?.body as any;
     const id = body?.id as number;
@@ -171,6 +185,7 @@ router.post(
 
 router.post(
   LOCATION_POINT_PATHS.REMOVE_UPVOTE_POINT,
+  upvoteLimiter,
   tryCatchWrapper(async (req: Request, res) => {
     const body = req?.body as any;
     const id = body?.id as number;
