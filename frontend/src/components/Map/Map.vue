@@ -97,9 +97,20 @@ export default {
       }
     },
     setLocationPoints(): void {
-      this.map?.setLocationPoints(this.locationPoints, (point) => {
-        this.handleEditLocation(point)
-      })
+      this.map?.setLocationPoints(
+        this.locationPoints,
+        (point) => this.handleMarkerClick(point),
+        (point) => this.handleEditLocation(point),
+        () => this.handlePopupClose(),
+      )
+    },
+    handlePopupClose() {
+      const query = { ...this.$route.query }
+      delete query.location
+      this.$router.push({ query })
+    },
+    handleMarkerClick(point: LocationPoint) {
+      this.$router.push({ query: { location: String(point.id) } })
     },
     handleEditLocation(point: LocationPoint) {
       this.$router.push({ query: { location: String(point.id), edit: 'true' } })

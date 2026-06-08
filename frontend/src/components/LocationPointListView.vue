@@ -2,11 +2,13 @@
   <div class="component-LocationPointListView">
     <ul class="scroller-list">
       <li class="location-point" v-for="locationPoint in locationPoints" :key="locationPoint.id">
-        <div class="top-box">
-          <h3 class="location-name">{{ locationPoint.name }}</h3>
-          <p v-if="locationPoint.city" class="location-city">{{ locationPoint.city }}</p>
-        </div>
-        <p class="location-desc">{{ locationPoint.description }}</p>
+        <router-link :to="`?location=${locationPoint.id}&list=open`" class="overlay-link">
+          <div class="top-box">
+            <h3 class="location-name">{{ locationPoint.name }}</h3>
+            <p v-if="locationPoint.city" class="location-city">{{ locationPoint.city }}</p>
+          </div>
+          <p class="location-desc">{{ locationPoint.description }}</p>
+        </router-link>
       </li>
     </ul>
     <!-- <pre style="color: white">{{ locationPoints }}</pre> -->
@@ -50,6 +52,12 @@ export default {
       display: flex;
       flex-direction: column;
 
+      .overlay-link {
+        color: inherit;
+        text-decoration: none;
+        display: block;
+      }
+
       .top-box {
         display: flex;
         flex-direction: column;
@@ -82,6 +90,10 @@ export default {
       &:last-child {
         border-bottom: none;
         padding-bottom: 80px;
+      }
+
+      &:hover {
+        background: var(--white-20);
       }
     }
   }

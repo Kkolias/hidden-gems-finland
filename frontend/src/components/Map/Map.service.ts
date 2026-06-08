@@ -34,7 +34,9 @@ export class MapService {
 
   setLocationPoints(
     locationPoints: LocationPoint[],
+    onMarkerClick?: (point: LocationPoint) => void,
     onEditClick?: (point: LocationPoint) => void,
+    onPopupClose?: () => void,
   ): void {
     if (!this.markersClusterGroup) {
       return
@@ -44,6 +46,18 @@ export class MapService {
       const marker = L.marker([point.latitude, point.longitude], {
         icon: markerIcon,
       }).bindPopup(customInfoWindow(point), customInfoWindowOptions)
+
+      if (onMarkerClick) {
+        marker.on('click', () => {
+          onMarkerClick(point)
+        })
+      }
+
+      if (onPopupClose) {
+        marker.on('popupclose', () => {
+          onPopupClose()
+        })
+      }
 
       if (onEditClick) {
         marker.on('popupopen', () => {
