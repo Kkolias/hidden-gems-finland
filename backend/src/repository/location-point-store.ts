@@ -16,6 +16,7 @@ const selectFields: SelectExpression<Database, "location_points">[] = [
   "latitude",
   "longitude",
   "image_url",
+  "upvotes",
   "created_at",
   "updated_at",
 ];
@@ -74,6 +75,50 @@ export class LocationPointStore {
       await trx.rollback().execute();
       throw error;
     }
+  }
+
+  async upvote(id: number): Promise<LocationPoint> {
+    if (!id) throw Error("No id given");
+
+    const currentItem = await db
+      .selectFrom("location_points")
+      .select("upvotes")
+      .where("id", "=", id)
+      .executeTakeFirst();
+    const currentUpvotes = currentItem?.upvotes || 0;
+
+    const r = await db
+      .updateTable("location_points")
+      .set({
+        upvotes: currentUpvotes + 1,
+        updated_at: new Date().toUTCString() as any,
+      })
+      .where("id", "=", id)
+      .returning(selectFields)
+      .executeTakeFirst();
+    return r as LocationPoint;
+  }
+
+  async removeUpvote(id: number): Promise<LocationPoint> {
+    if (!id) throw Error("No id given");
+
+    const currentItem = await db
+      .selectFrom("location_points")
+      .select("upvotes")
+      .where("id", "=", id)
+      .executeTakeFirst();
+    const currentUpvotes = currentItem?.upvotes || 0;
+
+    const r = await db
+      .updateTable("location_points")
+      .set({
+        upvotes: Math.max(currentUpvotes - 1, 0),
+        updated_at: new Date().toUTCString() as any,
+      })
+      .where("id", "=", id)
+      .returning(selectFields)
+      .executeTakeFirst();
+    return r as LocationPoint;
   }
 }
 

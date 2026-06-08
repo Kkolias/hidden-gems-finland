@@ -19,6 +19,7 @@ export interface LocationPointTable {
   longitude: number;
   category: string | null;
   image_url: string | null;
+  upvotes: number;
   created_at: ColumnType<Date, string | undefined, never>;
   updated_at: ColumnType<Date, string | undefined, never>;
 }

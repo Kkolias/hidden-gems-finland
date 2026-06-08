@@ -34,6 +34,14 @@ export class LocationPointService {
   }> {
     return await checkPointNameAndDescription();
   }
+
+  async upvoteLocationPoint(id: number): Promise<LocationPoint> {
+    return await this.repositoryService.locationPointStore.upvote(id);
+  }
+
+  async removeUpvoteLocationPoint(id: number): Promise<LocationPoint> {
+    return await this.repositoryService.locationPointStore.removeUpvote(id);
+  }
 }
 
 export default new LocationPointService();

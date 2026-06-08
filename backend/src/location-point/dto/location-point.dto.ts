@@ -72,3 +72,8 @@ export class UpdateLocationDto {
   @Length(0, 50)
   category?: string;
 }
+
+export class LocationPointIdDto {
+  @IsNumber()
+  id!: number;
+}

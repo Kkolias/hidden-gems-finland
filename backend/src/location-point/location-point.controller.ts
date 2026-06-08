@@ -4,7 +4,11 @@ import { isAdmin } from "../utils/isAdmin";
 import locationPointService from "./location-point.service";
 import { Router, Request } from "express";
 import { validateBody } from "../utils/validateBody";
-import { CreateLocationDto, UpdateLocationDto } from "./dto/location-point.dto";
+import {
+  CreateLocationDto,
+  LocationPointIdDto,
+  UpdateLocationDto,
+} from "./dto/location-point.dto";
 import { getRouteBetweenPoints } from "./utils/getRouteBetweenPoints";
 
 const LOCATION_POINT_PREFIX = "/location-points";
@@ -16,6 +20,8 @@ const LOCATION_POINT_PATHS = {
   CHECK_LOCATIONS: `${LOCATION_POINT_PREFIX}/check-locations`,
   TEST: `${LOCATION_POINT_PREFIX}/test`,
   GET_ROUTE: `${LOCATION_POINT_PREFIX}/get-route`,
+  UPVOTE_POINT: `${LOCATION_POINT_PREFIX}/upvote`,
+  REMOVE_UPVOTE_POINT: `${LOCATION_POINT_PREFIX}/remove-upvote`,
 };
 
 const MINUTE_IN_MS = 60 * 1000;
@@ -142,6 +148,43 @@ router.get(
 
     const locationPoints = await getRouteBetweenPoints(coordinates);
     res.json(locationPoints);
+  }),
+);
+
+router.post(
+  LOCATION_POINT_PATHS.UPVOTE_POINT,
+  tryCatchWrapper(async (req: Request, res) => {
+    const body = req?.body as any;
+    const id = body?.id as number;
+
+    const errors = await validateBody(LocationPointIdDto, { id });
+    if (errors) {
+      return res
+        .status(400)
+        .json({ error: "Invalid payload", details: errors });
+    }
+
+    const updatedPoint = await locationPointService.upvoteLocationPoint(id);
+    res.json(updatedPoint);
+  }),
+);
+
+router.post(
+  LOCATION_POINT_PATHS.REMOVE_UPVOTE_POINT,
+  tryCatchWrapper(async (req: Request, res) => {
+    const body = req?.body as any;
+    const id = body?.id as number;
+
+    const errors = await validateBody(LocationPointIdDto, { id });
+    if (errors) {
+      return res
+        .status(400)
+        .json({ error: "Invalid payload", details: errors });
+    }
+
+    const updatedPoint =
+      await locationPointService.removeUpvoteLocationPoint(id);
+    res.json(updatedPoint);
   }),
 );
 
