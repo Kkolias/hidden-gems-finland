@@ -42,6 +42,9 @@ export class MapService {
     if (!this.markersClusterGroup) {
       return
     }
+    this.markersMap.forEach((marker) => {
+      marker.off()
+    })
     this.markersClusterGroup.clearLayers()
     this.markersMap.clear()
     locationPoints.forEach((point) => {
@@ -119,8 +122,11 @@ export class MapService {
   }
 
   clearSelectableMarker(): void {
-    if (this.selectableMarker && this.map) {
-      this.map.removeLayer(this.selectableMarker)
+    if (this.selectableMarker) {
+      this.selectableMarker.off()
+      if (this.map) {
+        this.map.removeLayer(this.selectableMarker)
+      }
       this.selectableMarker = null
     }
   }
@@ -144,6 +150,10 @@ export class MapService {
   }
 
   clearLocationPoints(): void {
+    this.markersMap.forEach((marker) => {
+      marker.off()
+    })
+    this.markersMap.clear()
     this.markersClusterGroup?.clearLayers()
   }
 

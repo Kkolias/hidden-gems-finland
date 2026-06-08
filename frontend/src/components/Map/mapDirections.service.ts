@@ -68,6 +68,7 @@ export class MapDirections {
 
   clearStartMarker(): void {
     if (this.startMarker) {
+      this.startMarker.off()
       this.map.removeLayer(this.startMarker)
       this.startMarker = null
     }
@@ -75,6 +76,7 @@ export class MapDirections {
 
   clearEndMarker(): void {
     if (this.endMarker) {
+      this.endMarker.off()
       this.map.removeLayer(this.endMarker)
       this.endMarker = null
     }
