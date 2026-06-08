@@ -97,9 +97,16 @@ export class MapService {
                 }
               }
               const upvoteBtn = content.querySelector('#upvote-btn') as HTMLButtonElement
+              const upvoteCount = content.querySelector('.upvote-container span') as HTMLSpanElement
               if (upvoteBtn) {
                 upvoteBtn.onclick = (e) => {
                   e.stopPropagation()
+                  const wasUpvoted = upvoteBtn.classList.contains('upvoted')
+                  upvoteBtn.classList.toggle('upvoted')
+                  if (upvoteCount) {
+                    const current = Number(upvoteCount.textContent || '0')
+                    upvoteCount.textContent = String(wasUpvoted ? current - 1 : current + 1)
+                  }
                   onUpvoteClick(point)
                 }
               }
