@@ -13,6 +13,7 @@ export class MapService {
   selectableMarker: L.Marker | null = null
   directionsService: MapDirections | null = null
   routeClickHandler: ((e: L.LeafletMouseEvent) => void) | null = null
+  markersMap: Map<number, L.Marker> = new Map()
 
   initMap() {
     this.map = L.map('map', { zoomAnimation: true, zoomControl: false }).setView(
@@ -42,10 +43,13 @@ export class MapService {
       return
     }
     this.markersClusterGroup.clearLayers()
+    this.markersMap.clear()
     locationPoints.forEach((point) => {
       const marker = L.marker([point.latitude, point.longitude], {
         icon: markerIcon,
       }).bindPopup(customInfoWindow(point), customInfoWindowOptions)
+
+      this.markersMap.set(point.id, marker)
 
       if (onMarkerClick) {
         marker.on('click', () => {
@@ -125,6 +129,18 @@ export class MapService {
     if (!this.map) return null
     const center = this.map.getCenter()
     return { lat: center.lat, lng: center.lng }
+  }
+
+  openPopupForLocation(locationId: number, locationPoints: LocationPoint[]): void {
+    const marker = this.markersMap.get(locationId)
+    const point = locationPoints.find((p) => p.id === locationId)
+    if (marker && this.map) {
+      this.map.closePopup()
+      this.map.flyTo([point!.latitude, point!.longitude], 13, { animate: true, duration: 1 })
+      setTimeout(() => {
+        marker.openPopup()
+      }, 1500)
+    }
   }
 
   clearLocationPoints(): void {

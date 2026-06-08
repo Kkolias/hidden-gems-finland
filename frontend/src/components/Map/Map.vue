@@ -31,11 +31,17 @@ export default {
     mounted: false,
     setLocationsAfterMount: false,
     routeStep: 'idle' as 'idle' | 'start' | 'end' | 'complete',
+    skipLocationWatcher: false,
+    skipPopupCloseHandler: false,
   }),
   computed: {
     isSelectLocationMode(): boolean {
       const queryParams = this.$route?.query
       return queryParams?.['select-location'] === 'true'
+    },
+    isEditOpen(): boolean {
+      const queryParams = this.$route?.query
+      return queryParams?.edit === 'true'
     },
   },
   mounted() {
@@ -54,7 +60,7 @@ export default {
           this.setLocationsAfterMount = true
         }
         if (!this.isSelectLocationMode) {
-        // if (!this.isSelectLocationMode && !this.routeMode) {
+          // if (!this.isSelectLocationMode && !this.routeMode) {
           this.setLocationPoints()
         }
       },
@@ -63,7 +69,6 @@ export default {
     },
     isSelectLocationMode: {
       handler(isSelecting: boolean) {
-        console.log('MUUTTUU', isSelecting)
         if (isSelecting) {
           this.enterSelectLocationMode()
         } else {
@@ -78,6 +83,16 @@ export default {
         } else {
           this.exitRouteMode()
         }
+      },
+    },
+    '$route.query.location': {
+      handler(locationId: string | undefined) {
+        if (!locationId || this.skipLocationWatcher) {
+          this.skipLocationWatcher = false
+          return
+        }
+        this.skipPopupCloseHandler = true
+        this.map?.openPopupForLocation(Number(locationId), this.locationPoints)
       },
     },
   },
@@ -105,11 +120,16 @@ export default {
       )
     },
     handlePopupClose() {
+      if (this.skipPopupCloseHandler || this.isEditOpen) {
+        this.skipPopupCloseHandler = false
+        return
+      }
       const query = { ...this.$route.query }
       delete query.location
       this.$router.push({ query })
     },
     handleMarkerClick(point: LocationPoint) {
+      this.skipLocationWatcher = true
       this.$router.push({ query: { location: String(point.id) } })
     },
     handleEditLocation(point: LocationPoint) {
